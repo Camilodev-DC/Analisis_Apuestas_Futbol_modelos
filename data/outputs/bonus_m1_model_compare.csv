@@ -1,0 +1,6 @@
+model,auc,brier,log_loss,mean_pred
+random_forest,0.825,0.0711,0.2536,0.1149
+logistic_balanced,0.7963,0.1768,0.5413,0.421
+logistic_unweighted,0.7955,0.0744,0.2665,0.1149
+mlp,0.7789,0.0766,0.2943,0.1065
+svm_rbf,0.7455,0.0857,0.3122,0.1174

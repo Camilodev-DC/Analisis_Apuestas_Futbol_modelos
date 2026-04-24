@@ -1,0 +1,22 @@
+{
+  "auc_roc": 0.7955,
+  "brier_score": 0.0744,
+  "log_loss": 0.2665,
+  "xg_mean": 0.1149,
+  "goal_rate": 0.1099,
+  "features_used": [
+    "distance_to_goal",
+    "angle_to_goal",
+    "is_penalty",
+    "shot_quality_index",
+    "defensive_pressure",
+    "buildup_passes",
+    "buildup_unique_players",
+    "buildup_decentralized",
+    "ppda",
+    "pass_decentralization",
+    "first_touch"
+  ],
+  "n_train": 5103,
+  "n_test": 1256
+}

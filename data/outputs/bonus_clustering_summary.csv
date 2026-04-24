@@ -1,0 +1,4 @@
+cluster,shots,goal_rate,mean_distance,mean_angle,mean_xg,box_share,central_share,big_chance_share,header_share,penalty_share,first_touch_share
+0,33.2766,0.0824,21.0447,0.5135,0.3025,0.4787,0.8197,0.0771,0.0814,0.0053,0.419
+1,35.3429,0.108,18.8944,0.6947,0.3577,0.7312,0.7269,0.1867,0.0592,0.0177,0.366
+2,38.2174,0.1646,14.2466,0.5468,0.4163,0.8377,0.9204,0.3004,0.3371,0.019,0.6673

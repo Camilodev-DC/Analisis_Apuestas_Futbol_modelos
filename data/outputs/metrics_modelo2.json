@@ -1,0 +1,31 @@
+{
+  "regresion": {
+    "r2": -0.0793,
+    "rmse": 1.6384,
+    "mae": 1.2898
+  },
+  "clasificacion": {
+    "accuracy": 0.5087,
+    "f1_macro": 0.4066,
+    "bet365_accuracy": 0.5043
+  },
+  "features_regresion": [
+    "home_xg_for_avg5",
+    "away_xg_for_avg5",
+    "home_sot_avg5",
+    "away_sot_avg5",
+    "expected_total_xg",
+    "bookmaker_spread_draw",
+    "implied_prob_d",
+    "away_strength_rating"
+  ],
+  "features_clasificacion": [
+    "implied_prob_h",
+    "implied_prob_d",
+    "implied_prob_a",
+    "xg_form_diff",
+    "points_form_diff",
+    "big_chances_diff",
+    "home_strength_rating"
+  ]
+}

@@ -1,0 +1,5 @@
+model,accuracy,f1_macro,bet365_accuracy
+logistic_multinomial,0.5087,0.4066,0.5043
+random_forest,0.4783,0.3731,0.5043
+svm_rbf,0.4783,0.3348,0.5043
+mlp,0.413,0.3787,0.5043

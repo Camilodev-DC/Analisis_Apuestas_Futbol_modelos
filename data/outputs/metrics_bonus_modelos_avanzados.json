@@ -1,0 +1,98 @@
+{
+  "modelo1_xg_bonus": {
+    "split": {
+      "n_train": 5103,
+      "n_test": 1256
+    },
+    "features": [
+      "distance_to_goal",
+      "angle_to_goal",
+      "is_penalty",
+      "shot_quality_index",
+      "defensive_pressure",
+      "buildup_passes",
+      "buildup_unique_players",
+      "buildup_decentralized",
+      "ppda",
+      "pass_decentralization",
+      "first_touch"
+    ],
+    "results": [
+      {
+        "model": "logistic_unweighted",
+        "auc": 0.7955,
+        "brier": 0.0744,
+        "log_loss": 0.2665,
+        "mean_pred": 0.1149
+      },
+      {
+        "model": "logistic_balanced",
+        "auc": 0.7963,
+        "brier": 0.1768,
+        "log_loss": 0.5413,
+        "mean_pred": 0.421
+      },
+      {
+        "model": "random_forest",
+        "auc": 0.825,
+        "brier": 0.0711,
+        "log_loss": 0.2536,
+        "mean_pred": 0.1149
+      },
+      {
+        "model": "svm_rbf",
+        "auc": 0.7455,
+        "brier": 0.0857,
+        "log_loss": 0.3122,
+        "mean_pred": 0.1174
+      },
+      {
+        "model": "mlp",
+        "auc": 0.7789,
+        "brier": 0.0766,
+        "log_loss": 0.2943,
+        "mean_pred": 0.1065
+      }
+    ],
+    "best_model_by_auc": "random_forest"
+  },
+  "modelo2b_bonus": {
+    "n_matches_used": 277,
+    "features": [
+      "implied_prob_h",
+      "implied_prob_d",
+      "implied_prob_a",
+      "xg_form_diff",
+      "points_form_diff",
+      "big_chances_diff",
+      "home_strength_rating"
+    ],
+    "results": [
+      {
+        "model": "logistic_multinomial",
+        "accuracy": 0.5087,
+        "f1_macro": 0.4066,
+        "bet365_accuracy": 0.5043
+      },
+      {
+        "model": "random_forest",
+        "accuracy": 0.4783,
+        "f1_macro": 0.3731,
+        "bet365_accuracy": 0.5043
+      },
+      {
+        "model": "svm_rbf",
+        "accuracy": 0.4783,
+        "f1_macro": 0.3348,
+        "bet365_accuracy": 0.5043
+      },
+      {
+        "model": "mlp",
+        "accuracy": 0.413,
+        "f1_macro": 0.3787,
+        "bet365_accuracy": 0.5043
+      }
+    ],
+    "best_model_by_accuracy": "logistic_multinomial"
+  }
+}
