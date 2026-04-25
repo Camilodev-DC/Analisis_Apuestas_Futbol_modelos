@@ -107,7 +107,9 @@ new Chart(document.getElementById('chart-uwvbal'), {
 });
 
 // ── ROC Curve ──────────────────────────────────────────────────────
-new Chart(document.getElementById('chart-roc'), {
+const canvasRoc = document.getElementById('chart-roc');
+if (canvasRoc) {
+new Chart(canvasRoc, {
   type: 'line',
   data: {
     datasets: [
@@ -131,6 +133,7 @@ new Chart(document.getElementById('chart-roc'), {
     }
   }
 });
+}
 
 // ── AUC Compare M1 — loaded from model_compare.json ───────────────
 // Built after modelCompareData is fetched (see bottom of file)
@@ -168,7 +171,9 @@ window.showCoef = function(cls) {
 };
 
 // ── FTR Donut ──────────────────────────────────────────────────────
-new Chart(document.getElementById('chart-ftr'), {
+const canvasFtr = document.getElementById('chart-ftr');
+if (canvasFtr) {
+new Chart(canvasFtr, {
   type:'doughnut',
   data:{
     labels:['Local (H) 42.3%','Empate (D) 26.1%','Visitante (A) 31.6%'],
@@ -188,9 +193,12 @@ new Chart(document.getElementById('chart-ftr'), {
     cutout:'62%'
   }
 });
+}
 
 // ── xG by zone bar ─────────────────────────────────────────────────
-new Chart(document.getElementById('chart-xg-zone'), {
+const canvasXgZone = document.getElementById('chart-xg-zone');
+if (canvasXgZone) {
+new Chart(canvasXgZone, {
   type:'bar',
   data:{
     labels:['Pequeña área','Centro área','Área izq/der','Fuera área','Lejanía'],
@@ -211,6 +219,7 @@ new Chart(document.getElementById('chart-xg-zone'), {
     }
   }
 });
+}
 
 // ── Team charts ────────────────────────────────────────────────────
 let teamStatsData = [];
@@ -236,7 +245,9 @@ Promise.resolve(window.team_statsData)
 
     // Goals chart
     const top = [...data].sort((a,b)=>b.gf-a.gf).slice(0,10);
-    new Chart(document.getElementById('chart-team-goals'), {
+    const canvasTeamGoals = document.getElementById('chart-team-goals');
+    if (canvasTeamGoals) {
+    new Chart(canvasTeamGoals, {
       type:'bar',
       data:{
         labels: top.map(t=>t.team),
@@ -254,10 +265,13 @@ Promise.resolve(window.team_statsData)
         scales:{ x:{grid:{color:'rgba(45,106,39,0.1)'},ticks:{font:{size:11}}}, y:{grid:{display:false},ticks:{font:{size:11}}} }
       }
     });
+    }
 
     // Home wins chart
     const hw = [...data].sort((a,b)=>b.wins-a.wins).slice(0,10);
-    new Chart(document.getElementById('chart-home-wins'), {
+    const canvasHomeWins = document.getElementById('chart-home-wins');
+    if (canvasHomeWins) {
+    new Chart(canvasHomeWins, {
       type:'bar',
       data:{
         labels: hw.map(t=>t.team),
@@ -276,6 +290,7 @@ Promise.resolve(window.team_statsData)
         }
       }
     });
+    }
   })
   .catch(e => console.warn('team_stats:', e));
 
@@ -624,7 +639,9 @@ document.getElementById('pred-btn')?.addEventListener('click', ()=>{
 });
 
 // ── Calibration chart (decile-based, from model stats) ─────────────
-new Chart(document.getElementById('chart-calibration'), {
+const canvasCalibration = document.getElementById('chart-calibration');
+if (canvasCalibration) {
+new Chart(canvasCalibration, {
   type:'line',
   data:{
     labels:['0.0','0.05','0.10','0.15','0.20','0.30','0.40','0.50','0.60','0.80','1.0'],
@@ -644,9 +661,12 @@ new Chart(document.getElementById('chart-calibration'), {
     }
   }
 });
+}
 
 // ── ROC All models ─────────────────────────────────────────────────
-new Chart(document.getElementById('chart-roc-all'), {
+const canvasRocAll = document.getElementById('chart-roc-all');
+if (canvasRocAll) {
+new Chart(canvasRocAll, {
   type:'line',
   data:{
     datasets:[
@@ -666,10 +686,13 @@ new Chart(document.getElementById('chart-roc-all'), {
     }
   }
 });
+}
 
 
 // ── Silhouette chart ───────────────────────────────────────────────
-new Chart(document.getElementById('chart-silhouette'), {
+const canvasSilhouette = document.getElementById('chart-silhouette');
+if (canvasSilhouette) {
+new Chart(canvasSilhouette, {
   type:'line',
   data:{
     labels:[2,3,4,5,6,7,8],
@@ -687,6 +710,7 @@ new Chart(document.getElementById('chart-silhouette'), {
     }
   }
 });
+}
 
 // ── xG teams chart — from xg_teams.json ───────────────────────────
 let xgTeamsData = [];
@@ -830,7 +854,10 @@ function buildCompM1() {
     }
   };
   if (compM1Chart) { compM1Chart.destroy(); }
-  compM1Chart = new Chart(document.getElementById('chart-comp-m1'), config);
+  const canvasCompM1 = document.getElementById('chart-comp-m1');
+  if (canvasCompM1) {
+    compM1Chart = new Chart(canvasCompM1, config);
+  }
   // Winner badge
   const hiB = METRIC_HIGHER_BETTER[compM1Metric];
   const best = rows.reduce((a,b)=> hiB ? (b[compM1Metric]>a[compM1Metric]?b:a) : (b[compM1Metric]<a[compM1Metric]?b:a));
@@ -875,7 +902,10 @@ function buildCompM2() {
     }
   };
   if (compM2Chart) { compM2Chart.destroy(); }
-  compM2Chart = new Chart(document.getElementById('chart-comp-m2'), config);
+  const canvasCompM2 = document.getElementById('chart-comp-m2');
+  if (canvasCompM2) {
+    compM2Chart = new Chart(canvasCompM2, config);
+  }
   const hiB = METRIC_HIGHER_BETTER[compM2Metric];
   const best = rows.reduce((a,b)=> hiB ? (b[compM2Metric]>a[compM2Metric]?b:a) : (b[compM2Metric]<a[compM2Metric]?b:a));
   const we = document.getElementById('comp-m2-winner');
