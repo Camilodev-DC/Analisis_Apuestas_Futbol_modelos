@@ -31,6 +31,14 @@ document.querySelectorAll('.tab-nav').forEach(nav => {
 
       animateBars(incoming);
       animateTabCharts(incoming);
+      // Re-trigger specific chart builds if they belong to this tab
+      if (id === 'eda-distribuciones') {
+        if (typeof buildFtrChart === 'function') buildFtrChart();
+        if (typeof buildXgZoneChart === 'function') buildXgZoneChart();
+      }
+      if (id === 'xg-calibracion') {
+        if (typeof buildCalibrationChart === 'function') buildCalibrationChart();
+      }
     });
   });
 });
@@ -171,55 +179,72 @@ window.showCoef = function(cls) {
 };
 
 // ── FTR Donut ──────────────────────────────────────────────────────
-const canvasFtr = document.getElementById('chart-ftr');
-if (canvasFtr) {
-new Chart(canvasFtr, {
-  type:'doughnut',
-  data:{
-    labels:['Local (H) 42.3%','Empate (D) 26.1%','Visitante (A) 31.6%'],
-    datasets:[{
-      data:[123,76,92],
-      backgroundColor:['rgba(74,140,63,0.78)','rgba(122,130,118,0.5)','rgba(197,160,89,0.78)'],
-      borderColor:['#4A8C3F','#7A8078','#C5A059'],
-      borderWidth:2, hoverOffset:8
-    }]
-  },
-  options:{
-    responsive:true, maintainAspectRatio:true, aspectRatio:1.4,
-    plugins:{
-      legend:{ position:'bottom', labels:{ font:{size:11} } },
-      tooltip:{ callbacks:{ label:i=>`${i.label}: ${i.raw} partidos` } }
-    },
-    cutout:'62%'
+let ftrChart = null;
+function buildFtrChart() {
+  const canvas = document.getElementById('chart-ftr');
+  if (!canvas) return;
+  if (ftrChart) {
+    ftrChart.resize();
+    ftrChart.update('none');
+    return;
   }
-});
+  ftrChart = new Chart(canvas, {
+    type:'doughnut',
+    data:{
+      labels:['Local (H) 42.3%','Empate (D) 26.1%','Visitante (A) 31.6%'],
+      datasets:[{
+        data:[123,76,92],
+        backgroundColor:['rgba(74,140,63,0.78)','rgba(122,130,118,0.5)','rgba(197,160,89,0.78)'],
+        borderColor:['#4A8C3F','#7A8078','#C5A059'],
+        borderWidth:2, hoverOffset:8
+      }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:true, aspectRatio:1.4,
+      plugins:{
+        legend:{ position:'bottom', labels:{ font:{size:11} } },
+        tooltip:{ callbacks:{ label:i=>`${i.label}: ${i.raw} partidos` } }
+      },
+      padding: { top: 10, bottom: 10 },
+      cutout:'62%'
+    }
+  });
 }
+buildFtrChart();
 
 // ── xG by zone bar ─────────────────────────────────────────────────
-const canvasXgZone = document.getElementById('chart-xg-zone');
-if (canvasXgZone) {
-new Chart(canvasXgZone, {
-  type:'bar',
-  data:{
-    labels:['Pequeña área','Centro área','Área izq/der','Fuera área','Lejanía'],
-    datasets:[{
-      label:'xG medio (shot_quality_index)',
-      data:[0.48, 0.31, 0.22, 0.12, 0.06],
-      backgroundColor:['rgba(197,160,89,0.8)','rgba(74,140,63,0.72)','rgba(74,140,63,0.55)','rgba(74,140,63,0.35)','rgba(74,140,63,0.2)'],
-      borderColor:['#C5A059','#4A8C3F','#4A8C3F','#4A8C3F','#4A8C3F'],
-      borderWidth:1.5, borderRadius:6
-    }]
-  },
-  options:{
-    responsive:true, maintainAspectRatio:true, aspectRatio:1.4,
-    plugins:{ legend:{ display:false } },
-    scales:{
-      x:{ grid:{display:false}, ticks:{font:{size:11}} },
-      y:{ grid:{color:'rgba(45,106,39,0.1)'}, ticks:{font:{size:11}} }
-    }
+let xgZoneChart = null;
+function buildXgZoneChart() {
+  const canvas = document.getElementById('chart-xg-zone');
+  if (!canvas) return;
+  if (xgZoneChart) {
+    xgZoneChart.resize();
+    xgZoneChart.update('none');
+    return;
   }
-});
+  xgZoneChart = new Chart(canvas, {
+    type:'bar',
+    data:{
+      labels:['Pequeña área','Centro área','Área izq/der','Fuera área','Lejanía'],
+      datasets:[{
+        label:'xG medio (shot_quality_index)',
+        data:[0.48, 0.31, 0.22, 0.12, 0.06],
+        backgroundColor:['rgba(197,160,89,0.8)','rgba(74,140,63,0.72)','rgba(74,140,63,0.55)','rgba(74,140,63,0.35)','rgba(74,140,63,0.2)'],
+        borderColor:['#C5A059','#4A8C3F','#4A8C3F','#4A8C3F','#4A8C3F'],
+        borderWidth:1.5, borderRadius:6
+      }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:true, aspectRatio:1.4,
+      plugins:{ legend:{ display:false } },
+      scales:{
+        x:{ grid:{display:false}, ticks:{font:{size:11}} },
+        y:{ grid:{color:'rgba(45,106,39,0.1)'}, ticks:{font:{size:11}} }
+      }
+    }
+  });
 }
+buildXgZoneChart();
 
 // ── Team charts ────────────────────────────────────────────────────
 let teamStatsData = [];
@@ -639,29 +664,37 @@ document.getElementById('pred-btn')?.addEventListener('click', ()=>{
 });
 
 // ── Calibration chart (decile-based, from model stats) ─────────────
-const canvasCalibration = document.getElementById('chart-calibration');
-if (canvasCalibration) {
-new Chart(canvasCalibration, {
-  type:'line',
-  data:{
-    labels:['0.0','0.05','0.10','0.15','0.20','0.30','0.40','0.50','0.60','0.80','1.0'],
-    datasets:[
-      { label:'Modelo xG', data:[0.0,0.038,0.088,0.131,0.192,0.278,0.371,0.452,0.551,0.718,0.921],
-        borderColor:'#6DB85C', backgroundColor:'rgba(74,140,63,0.1)', fill:true, tension:0.3, pointRadius:4, borderWidth:2.5 },
-      { label:'Perfecta', data:[0,0.05,0.10,0.15,0.20,0.30,0.40,0.50,0.60,0.80,1.0],
-        borderColor:'rgba(197,160,89,0.5)', fill:false, pointRadius:0, borderDash:[6,3], borderWidth:1.5 }
-    ]
-  },
-  options:{
-    responsive:true, maintainAspectRatio:true, aspectRatio:1.5,
-    plugins:{ legend:{ position:'bottom', labels:{ font:{size:11} } } },
-    scales:{
-      x:{ title:{display:true,text:'Probabilidad predicha',font:{size:11}}, grid:{color:'rgba(45,106,39,0.1)'} },
-      y:{ min:0, max:1, title:{display:true,text:'Frecuencia real',font:{size:11}}, grid:{color:'rgba(45,106,39,0.1)'} }
-    }
+let calibrationChart = null;
+function buildCalibrationChart() {
+  const canvas = document.getElementById('chart-calibration');
+  if (!canvas) return;
+  if (calibrationChart) {
+    calibrationChart.resize();
+    calibrationChart.update('none');
+    return;
   }
-});
+  calibrationChart = new Chart(canvas, {
+    type:'line',
+    data:{
+      labels:['0.0','0.05','0.10','0.15','0.20','0.30','0.40','0.50','0.60','0.80','1.0'],
+      datasets:[
+        { label:'Modelo xG', data:[0.0,0.038,0.088,0.131,0.192,0.278,0.371,0.452,0.551,0.718,0.921],
+          borderColor:'#6DB85C', backgroundColor:'rgba(74,140,63,0.1)', fill:true, tension:0.3, pointRadius:4, borderWidth:2.5 },
+        { label:'Perfecta', data:[0,0.05,0.10,0.15,0.20,0.30,0.40,0.50,0.60,0.80,1.0],
+          borderColor:'rgba(197,160,89,0.5)', fill:false, pointRadius:0, borderDash:[6,3], borderWidth:1.5 }
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:true, aspectRatio:1.5,
+      plugins:{ legend:{ position:'bottom', labels:{ font:{size:11} } } },
+      scales:{
+        x:{ title:{display:true,text:'Probabilidad predicha',font:{size:11}}, grid:{color:'rgba(45,106,39,0.1)'} },
+        y:{ min:0, max:1, title:{display:true,text:'Frecuencia real',font:{size:11}}, grid:{color:'rgba(45,106,39,0.1)'} }
+      }
+    }
+  });
 }
+buildCalibrationChart();
 
 // ── ROC All models ─────────────────────────────────────────────────
 const canvasRocAll = document.getElementById('chart-roc-all');
