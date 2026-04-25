@@ -899,10 +899,16 @@ document.querySelectorAll('[data-m2-metric]').forEach(btn => {
 
 // VS selectors
 ['comp-m1-a','comp-m1-b'].forEach(id => {
-  document.getElementById(id)?.addEventListener('change', buildCompM1);
+  document.getElementById(id)?.addEventListener('change', () => {
+    if (compM1AllMode) toggleCompM1All();
+    else buildCompM1();
+  });
 });
 ['comp-m2-a','comp-m2-b'].forEach(id => {
-  document.getElementById(id)?.addEventListener('change', buildCompM2);
+  document.getElementById(id)?.addEventListener('change', () => {
+    if (compM2AllMode) toggleCompM2All();
+    else buildCompM2();
+  });
 });
 
 Promise.resolve(window.model_compareData)
