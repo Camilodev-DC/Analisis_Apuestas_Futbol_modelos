@@ -9,79 +9,28 @@ if (heroVideo) {
 // ── GSAP ─────────────────────────────────────────────────────────
 gsap.registerPlugin(ScrollTrigger);
 
-// ── Hero entrance — set initial state first, then animate TO visible
-['#hero-eye','#hero-title','#hero-sub','#hero-kpis','#scroll-hint'].forEach(sel => {
-  gsap.set(sel, { opacity:0, y: sel==='#hero-title' ? 44 : 22 });
-});
+// Scroll reveals desactivados — spa.js maneja las animaciones de entrada por sección
 
-const htl = gsap.timeline({ delay: 0.15 });
-htl
-  .to('#hero-eye',   { opacity:1, y:0, duration:0.7, ease:'power3.out' }, 0)
-  .to('#hero-title', { opacity:1, y:0, duration:0.9, ease:'power3.out' }, 0.12)
-  .to('#hero-sub',   { opacity:1, y:0, duration:0.7, ease:'power3.out' }, 0.28)
-  .to('#hero-kpis',  { opacity:1, y:0, duration:0.7, ease:'power3.out' }, 0.42)
-  .to('#scroll-hint',{ opacity:1, y:0, duration:0.5, ease:'power3.out' }, 0.65);
-
-// KPI counters
-function counter(el, end, dec, pre, suf) {
-  if (!el) return;
-  gsap.to({ v: 0 }, {
-    v: end, duration: 2.2, delay: 0.7, ease: 'power2.out',
-    onUpdate() { el.textContent = (pre||'') + this._targets[0].v.toFixed(dec) + (suf||''); }
-  });
-}
-counter(document.getElementById('kpi1'), 0.7955, 4);
-counter(document.getElementById('kpi2'), 50.87, 2, '', '%');
-counter(document.getElementById('kpi3'), 0.44, 2, '+', 'pp');
-
-// Scroll chevron bounce
-gsap.to('.scroll-chevron', { y:8, duration:0.9, repeat:-1, yoyo:true, ease:'sine.inOut' });
-
-// ── Scroll reveals — use IntersectionObserver (more reliable than GSAP ScrollTrigger)
-// Set initial invisible state via JS, not CSS
-document.querySelectorAll('.rev').forEach(el => {
-  el.style.opacity = '0';
-  el.style.transform = 'translateY(36px)';
-  el.style.transition = 'opacity 0.7s ease, transform 0.7s ease';
-});
-
-const revIO = new IntersectionObserver((entries) => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      e.target.style.opacity = '1';
-      e.target.style.transform = 'translateY(0)';
-      revIO.unobserve(e.target);
-    }
-  });
-}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
-
-document.querySelectorAll('.rev').forEach(el => revIO.observe(el));
-
-// ── Active nav link ────────────────────────────────────────────────
-const sections = document.querySelectorAll('section[id]');
-const navAs = document.querySelectorAll('.nav-links a');
-window.addEventListener('scroll', () => {
-  let cur = '';
-  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 130) cur = s.id; });
-  navAs.forEach(a => {
-    a.classList.toggle('active', a.getAttribute('href') === '#' + cur);
-  });
-}, { passive: true });
+// Active nav link is managed by spa.js
 
 // ── Tab system (generic) ───────────────────────────────────────────
 document.querySelectorAll('.tab-nav').forEach(nav => {
   nav.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const id = btn.dataset.tab;
+      const parent = nav.parentElement;
+      const incoming = document.getElementById(id);
+      if (!incoming || incoming.classList.contains('active')) return;
+
       nav.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      // Find sibling panes
-      const parent = nav.parentElement;
+
       parent.querySelectorAll('.tab-pane').forEach(p => {
         p.classList.toggle('active', p.id === id);
       });
-      // Trigger bar animation on new visible pane
-      animateBars(document.getElementById(id));
+
+      animateBars(incoming);
+      animateTabCharts(incoming);
     });
   });
 });
@@ -103,7 +52,25 @@ function animateBars(scope) {
 }
 animateBars();
 
+// ── Reanimar gráficas al cambiar de tab ───────────────────────────
+function animateTabCharts(pane) {
+  if (!pane || typeof Chart === 'undefined') return;
+  setTimeout(() => {
+    pane.querySelectorAll('canvas').forEach(canvas => {
+      const chart = Chart.getChart(canvas);
+      if (!chart) return;
+      // Fit canvas to its visible container, then redraw
+      chart.resize();
+      chart.update('none');
+    });
+  }, 60);
+}
+
 // ── Chart.js defaults ──────────────────────────────────────────────
+Chart.defaults.animation = {
+  duration: 900,
+  easing: 'easeOutQuart',
+};
 Chart.defaults.color = '#6B7A64';
 Chart.defaults.borderColor = 'rgba(45,106,39,0.1)';
 Chart.defaults.font.family = "'Inter', 'Space Grotesk', sans-serif";
@@ -338,14 +305,15 @@ let clusterChart = null;
 Promise.resolve(window.clusteringData)
   .then(players => {
     clusteringData = players;
-    const colors = ['#6DB85C','#C5A059','#4A8C3F'];
+    const colorsHex = ['#6DB85C','#C5A059','#4A8C3F'];
+    const colorsRgba = ['rgba(109,184,92,0.6)','rgba(197,160,89,0.6)','rgba(74,140,63,0.6)'];
     const names = ['Rematadores distancia','Atacantes interiores','Finalizadores área'];
 
     const ds = [0,1,2].map(c => ({
       label: names[c],
       data: players.filter(p=>p.cluster===c).map(p=>({x:p.pc1,y:p.pc2,name:p.name,team:p.team,goals:p.goals,xg:p.mean_xg,dist:p.mean_distance})),
-      backgroundColor: colors[c]+'80',
-      borderColor: colors[c],
+      backgroundColor: colorsRgba[c],
+      borderColor: colorsHex[c],
       borderWidth:1.5, pointRadius:5, pointHoverRadius:8
     }));
 
@@ -355,14 +323,15 @@ Promise.resolve(window.clusteringData)
       type:'scatter',
       data:{ datasets:ds },
       options:{
-        responsive:true, maintainAspectRatio:true, aspectRatio:1.3,
+        animation: false,
+        responsive:true, maintainAspectRatio:true, aspectRatio:1.0,
         plugins:{
           legend:{ position:'bottom', labels:{font:{size:11}} },
           tooltip:{ callbacks:{ label:i=>`${i.raw.name} (${i.raw.team}) — Goals:${i.raw.goals} xG:${i.raw.xg}` } }
         },
         scales:{
-          x:{ title:{display:true,text:'PC1',font:{size:11}}, grid:{color:'rgba(45,106,39,0.1)'} },
-          y:{ title:{display:true,text:'PC2',font:{size:11}}, grid:{color:'rgba(45,106,39,0.1)'} }
+          x:{ type:'linear', position:'bottom', title:{display:true,text:'PC1',font:{size:11}}, grid:{color:'rgba(45,106,39,0.1)'} },
+          y:{ type:'linear', title:{display:true,text:'PC2',font:{size:11}}, grid:{color:'rgba(45,106,39,0.1)'} }
         },
         onClick(e, els) {
           if (els.length) {
@@ -399,11 +368,11 @@ window.showClusterProfile = function(c) {
     <div style="margin-top:10px;padding:10px 14px;background:rgba(74,140,63,0.06);border:1px solid var(--border);border-radius:8px;font-size:0.8rem;color:var(--text-muted);">${p.note}</div>
   `;
   // Show top players of cluster (both sidebar panels)
-  const top = clusteringData.filter(p=>p.cluster===c).sort((a,b)=>b.goals-a.goals).slice(0,8);
-  const playerHtml = top.length ? top.map(p=>`
+  const top = clusteringData.filter(pl=>pl.cluster===c).sort((a,b)=>b.goals-a.goals).slice(0,8);
+  const playerHtml = top.length ? top.map(pl=>`
     <div class="stat-row">
-      <span class="label">${p.name} <span style="opacity:0.5;font-size:0.75em">(${p.team})</span></span>
-      <span class="value mono">${p.goals} goles · xG ${p.mean_xg}</span>
+      <span class="label">${pl.name} <span style="opacity:0.5;font-size:0.75em">(${pl.team})</span></span>
+      <span class="value mono">${pl.goals} goles · xG ${pl.mean_xg}</span>
     </div>`).join('') : '<div style="color:var(--text-muted);font-size:0.83rem;">Sin datos</div>';
   const pe = document.getElementById('cluster-players');
   if (pe) pe.innerHTML = playerHtml;
@@ -650,7 +619,7 @@ document.getElementById('pred-btn')?.addEventListener('click', ()=>{
     if (maxP===probH) { verdict=`Favorito: ${ht} (Local)`; color='#2D6A27'; }
     else if (maxP===probA) { verdict=`Favorito: ${at} (Visitante)`; color='#B8892A'; }
     else { verdict='Empate más probable'; color='#6B7A64'; }
-    vEl.style.cssText=`display:block;background:rgba(45,106,39,0.07);border:1px solid rgba(45,106,39,0.18);border-radius:10px;color:${color};font-size:0.88rem;font-weight:700;padding:12px 16px;text-align:center;`;
+    vEl.style.cssText=`display:block;background:rgba(45,106,39,0.07);border:1px solid rgba(45,106,39,0.18);border-radius:8px;color:${color};font-size:0.8rem;font-weight:700;padding:6px 10px;text-align:center;margin-top:6px;`;
     vEl.textContent=verdict;
   }, 60);
 });
@@ -699,35 +668,6 @@ new Chart(document.getElementById('chart-roc-all'), {
   }
 });
 
-// ── Residuals chart (synthetic from OLS model stats) ───────────────
-(function(){
-  const el = document.getElementById('chart-residuals');
-  if (!el) return;
-  const seed = (n) => { let x=n; return ()=>{ x=(x*1664525+1013904223)&0xffffffff; return (x>>>0)/0xffffffff-0.5; }; };
-  const rng = seed(42);
-  const xs=[], ys=[];
-  for(let i=0;i<80;i++){
-    const pred = 2.3 + rng()*0.9;
-    const res = rng()*2.2 + rng()*0.8;
-    xs.push(parseFloat(pred.toFixed(2)));
-    ys.push(parseFloat(res.toFixed(2)));
-  }
-  new Chart(el, {
-    type:'scatter',
-    data:{ datasets:[{ label:'Residuos', data:xs.map((x,i)=>({x,y:ys[i]})),
-      backgroundColor:'rgba(109,184,92,0.5)', borderColor:'#6DB85C', pointRadius:4, pointHoverRadius:6 }] },
-    options:{
-      responsive:true, maintainAspectRatio:true, aspectRatio:1.5,
-      plugins:{ legend:{display:false},
-        annotation:{ annotations:{ line:{ type:'line', yMin:0, yMax:0, borderColor:'rgba(197,160,89,0.5)', borderDash:[6,3] } } }
-      },
-      scales:{
-        x:{ title:{display:true,text:'Valores predichos (goles)',font:{size:11}}, grid:{color:'rgba(45,106,39,0.1)'} },
-        y:{ title:{display:true,text:'Residuo',font:{size:11}}, grid:{color:'rgba(45,106,39,0.1)'} }
-      }
-    }
-  });
-})();
 
 // ── Silhouette chart ───────────────────────────────────────────────
 new Chart(document.getElementById('chart-silhouette'), {
@@ -750,46 +690,74 @@ new Chart(document.getElementById('chart-silhouette'), {
 });
 
 // ── xG teams chart — from xg_teams.json ───────────────────────────
+let xgTeamsData = [];
+let xgTeamsChart = null;
+let xgSortKey = 'goals';
+
+function buildXgTeamsChart() {
+  const data = [...xgTeamsData].sort((a,b)=>b[xgSortKey]-a[xgSortKey]);
+  const labelMap = { goals:'Goles totales', mean_xg:'xG medio/tiro', n_shots:'Tiros totales', goal_rate:'Conversión' };
+  const metricData = data.map(t => xgSortKey === 'goal_rate' ? +(t.goal_rate*100).toFixed(1) : t[xgSortKey]);
+  const fmtCallback = v => xgSortKey === 'goal_rate' ? v.toFixed(1)+'%' : (xgSortKey === 'mean_xg' ? v.toFixed(4) : v);
+
+  if (xgTeamsChart) {
+    xgTeamsChart.data.labels = data.map(t=>t.team_name);
+    xgTeamsChart.data.datasets[0].data = metricData;
+    xgTeamsChart.data.datasets[0].label = labelMap[xgSortKey];
+    xgTeamsChart.data.datasets[0].backgroundColor = data.map((_,i)=>i<3?'rgba(197,160,89,0.82)':i<10?'rgba(74,140,63,0.65)':'rgba(74,140,63,0.35)');
+    xgTeamsChart.data.datasets[0].borderColor = data.map((_,i)=>i<3?'#C5A059':'#4A8C3F');
+    xgTeamsChart.options.scales.x.ticks.callback = fmtCallback;
+    xgTeamsChart.resize();
+    xgTeamsChart.update('active');
+    return;
+  }
+  xgTeamsChart = new Chart(document.getElementById('chart-xg-teams'), {
+    type:'bar',
+    data:{
+      labels: data.map(t=>t.team_name),
+      datasets:[{
+        label: labelMap[xgSortKey],
+        data: metricData,
+        backgroundColor: data.map((_,i)=>i<3?'rgba(197,160,89,0.82)':i<10?'rgba(74,140,63,0.65)':'rgba(74,140,63,0.35)'),
+        borderColor: data.map((_,i)=>i<3?'#C5A059':'#4A8C3F'),
+        borderWidth:1.5, borderRadius:5
+      }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:true, aspectRatio:1.6, indexAxis:'y',
+      plugins:{ legend:{display:false},
+        tooltip:{ callbacks:{ label: i => ` ${fmtCallback(i.raw)}` } }
+      },
+      scales:{
+        x:{ grid:{color:'rgba(45,106,39,0.1)'}, ticks:{font:{size:10}, callback: fmtCallback} },
+        y:{ grid:{display:false}, ticks:{font:{size:9}} }
+      }
+    }
+  });
+}
+
+window.sortXgTeams = function(key) {
+  xgSortKey = key;
+  ['goals','mean_xg','n_shots','goal_rate'].forEach(k => {
+    document.getElementById('xg-sort-'+k)?.classList.toggle('active', k===key);
+  });
+  buildXgTeamsChart();
+};
+
 Promise.resolve(window.xg_teamsData)
   .then(data => {
-    const sorted = [...data].sort((a,b)=>b.goals-a.goals);
-    // Top team stats
+    xgTeamsData = data;
+    const tEl = (id, v) => { const e=document.getElementById(id); if(e) e.textContent=v; };
     const topXg = [...data].sort((a,b)=>b.mean_xg-a.mean_xg)[0];
     const topShots = [...data].sort((a,b)=>b.n_shots-a.n_shots)[0];
     const topRate = [...data].sort((a,b)=>b.goal_rate-a.goal_rate)[0];
-    const tEl = (id, v) => { const e=document.getElementById(id); if(e) e.textContent=v; };
     tEl('top-xg-team', topXg?.team_name||'—');
     tEl('top-xg-val', `xG medio: ${topXg?.mean_xg?.toFixed(4)||'—'}`);
     tEl('top-shots-team', topShots?.team_name||'—');
     tEl('top-shots-val', `${topShots?.n_shots||'—'} tiros totales`);
     tEl('top-rate-team', topRate?.team_name||'—');
     tEl('top-rate-val', `${((topRate?.goal_rate||0)*100).toFixed(1)}% conversión`);
-
-    new Chart(document.getElementById('chart-xg-teams'), {
-      type:'bar',
-      data:{
-        labels: sorted.map(t=>t.team_name),
-        datasets:[
-          { label:'xG medio/tiro', data: sorted.map(t=>t.mean_xg), type:'line',
-            borderColor:'#C5A059', backgroundColor:'transparent', pointRadius:4,
-            pointBackgroundColor:'#C5A059', tension:0.3, yAxisID:'y2', borderWidth:2 },
-          { label:'Goles totales', data: sorted.map(t=>t.goals),
-            backgroundColor: sorted.map((_,i)=>i<3?'rgba(197,160,89,0.8)':i<10?'rgba(74,140,63,0.6)':'rgba(74,140,63,0.3)'),
-            borderColor: sorted.map((_,i)=>i<3?'#C5A059':'#4A8C3F'),
-            borderWidth:1.5, borderRadius:5, yAxisID:'y'
-          }
-        ]
-      },
-      options:{
-        responsive:true, maintainAspectRatio:true, aspectRatio:2.2,
-        plugins:{ legend:{position:'bottom',labels:{font:{size:11}}} },
-        scales:{
-          x:{ grid:{display:false}, ticks:{font:{size:10}} },
-          y:{ position:'left', title:{display:true,text:'Goles',font:{size:10}}, grid:{color:'rgba(45,106,39,0.1)'}, ticks:{font:{size:11}} },
-          y2:{ position:'right', title:{display:true,text:'xG medio',font:{size:10}}, grid:{display:false}, ticks:{font:{size:11}, callback:v=>v.toFixed(3)} }
-        }
-      }
-    });
+    buildXgTeamsChart();
   })
   .catch(e=>console.warn('xg_teams:', e));
 
@@ -836,7 +804,7 @@ function buildCompM1() {
     data:{ labels, datasets:[{ label:METRIC_LABELS[compM1Metric], data:values,
       backgroundColor:bgs, borderColor:bds, borderWidth:1.5, borderRadius:8 }] },
     options:{
-      responsive:true, maintainAspectRatio:true, aspectRatio:2.2, indexAxis:'y',
+      responsive:true, maintainAspectRatio:false, indexAxis:'y',
       plugins:{ legend:{display:false},
         tooltip:{ callbacks:{ label: i => ` ${METRIC_FMT[compM1Metric](i.raw)}` } } },
       scales:{
@@ -881,7 +849,7 @@ function buildCompM2() {
     type:'bar',
     data:{ labels, datasets },
     options:{
-      responsive:true, maintainAspectRatio:true, aspectRatio:2.4, indexAxis:'y',
+      responsive:true, maintainAspectRatio:false, indexAxis:'y',
       plugins:{ legend:{ display:showBet, position:'bottom', labels:{font:{size:11}} },
         tooltip:{ callbacks:{ label: i => ` ${METRIC_FMT[compM2Metric](i.raw)}` } } },
       scales:{
@@ -956,6 +924,7 @@ Promise.resolve(window.model_compareData)
         }]
       },
       options:{
+        animation: false,
         responsive:true, maintainAspectRatio:true, aspectRatio:1.5, indexAxis:'y',
         plugins:{ legend:{display:false} },
         scales:{
@@ -980,6 +949,7 @@ Promise.resolve(window.model_compareData)
         }]
       },
       options:{
+        animation: false,
         responsive:true, maintainAspectRatio:true, aspectRatio:2, indexAxis:'y',
         plugins:{ legend:{display:false} },
         scales:{

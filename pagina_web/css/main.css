@@ -206,7 +206,7 @@ section:nth-child(even) { background: var(--bg-panel); }
   box-shadow: var(--shadow-sm);
   transition: border-color 0.3s, box-shadow 0.3s, transform 0.2s;
 }
-.kpi-chip:hover { border-color: var(--accent-green); box-shadow: var(--shadow-blue); transform: translateY(-2px); }
+.kpi-chip:hover { border-color: var(--accent-green); box-shadow: var(--shadow-blue); }
 
 .kpi-val {
   font-size: 2rem; font-weight: 800; letter-spacing: -0.04em;
@@ -249,8 +249,28 @@ section:nth-child(even) { background: var(--bg-panel); }
   box-shadow: 0 2px 8px rgba(45,106,39,0.25);
 }
 
-.tab-pane { display: none; }
-.tab-pane.active { display: block; }
+.tab-pane {
+  display: none;
+}
+.tab-pane.active {
+  display: block;
+  animation: tabFadeIn 0.38s cubic-bezier(.23,1,.32,1) forwards;
+}
+.tab-pane.active.no-anim {
+  animation: none;
+  opacity: 1;
+  transform: none;
+}
+@keyframes tabFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
 /* ── Cards ─────────────────────────────────────────────────────── */
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
@@ -265,7 +285,7 @@ section:nth-child(even) { background: var(--bg-panel); }
 }
 .card:hover {
   border-color: rgba(45,106,39,0.3);
-  box-shadow: var(--shadow-blue); transform: translateY(-2px);
+  box-shadow: var(--shadow-blue);
 }
 .card.gold  { border-color: var(--border-gold); }
 .card.gold:hover  { border-color: var(--accent-gold); box-shadow: var(--shadow-gold); }
@@ -339,7 +359,9 @@ section:nth-child(even) { background: var(--bg-panel); }
 }
 
 #pitch-canvas {
-  display: block; width: 100%; border-radius: 8px; cursor: crosshair;
+  display: block; width: 100%; height: auto; border-radius: 8px; cursor: crosshair;
+  max-height: calc(100vh - 230px);
+  object-fit: contain;
 }
 
 .pitch-controls {

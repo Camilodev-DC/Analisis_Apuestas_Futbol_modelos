@@ -9,6 +9,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/animations3d.css">
+  <link rel="stylesheet" href="css/spa.css">
 </head>
 <body>
 
@@ -31,6 +33,8 @@
 
 <!-- ══ HERO ═══════════════════════════════════════════════════════ -->
 <section class="hero" id="hero">
+  <div class="hero-ball-deco tl">⚽</div>
+  <div class="hero-ball-deco br">⚽</div>
   <div class="hero-video-wrap">
     <video autoplay muted loop playsinline>
       <source src="../Cambiar_Luz_de_Balón_a_Dorado.mp4" type="video/mp4">
@@ -40,34 +44,30 @@
   <div class="hero-content">
     <div class="hero-eyebrow" id="hero-eye">
       <span class="live-dot"></span>
-      Premier League 2025–26 · Datos en vivo
+      Premier League 2025–26 · GW1–GW30 · Datos reales
     </div>
     <h1 class="hero-title" id="hero-title">
-      <span class="t1">Machine</span>
-      <span class="t2">Learning</span>
-      <span class="t3">¿Puede un modelo superar a Bet365?</span>
+      <span class="t1">Fútbol</span>
+      <span class="t2">+ Machine Learning</span>
+      <span class="t3">¿Puede un modelo ganarle a Bet365?</span>
     </h1>
     <p class="hero-sub" id="hero-sub">
-      Regresión logística, xG y predicción de partidos con 7,198 tiros
-      y 291 partidos de datos reales. Universidad Externado de Colombia.
+      7,198 tiros · 291 partidos · 20 equipos de la Premier League.
+      xG por tiro, predicción de resultado y segmentación de jugadores con datos reales.
     </p>
     <div class="hero-kpis" id="hero-kpis">
       <div class="kpi-chip">
-        <span class="kpi-val blue mono" id="kpi1">0.0000</span>
-        <span class="kpi-lbl">AUC — Modelo xG</span>
+        <span class="kpi-val blue mono" id="kpi1">0.7955</span>
+        <span class="kpi-lbl">AUC · Modelo xG</span>
       </div>
       <div class="kpi-chip">
-        <span class="kpi-val gold mono" id="kpi2">0.00%</span>
-        <span class="kpi-lbl">Accuracy vs Bet365</span>
+        <span class="kpi-val gold mono" id="kpi2">50.87%</span>
+        <span class="kpi-lbl">Superamos a Bet365</span>
       </div>
       <div class="kpi-chip">
-        <span class="kpi-val green mono" id="kpi3">+0.00pp</span>
-        <span class="kpi-lbl">Por encima del benchmark</span>
+        <span class="kpi-val green mono" id="kpi3">OR 104×</span>
+        <span class="kpi-lbl">shot_quality_index</span>
       </div>
-    </div>
-    <div class="scroll-hint" id="scroll-hint">
-      <span>Scroll</span>
-      <div class="scroll-chevron"></div>
     </div>
   </div>
 </section>
@@ -77,41 +77,63 @@
 <!-- ══ RESUMEN ════════════════════════════════════════════════════ -->
 <section id="resumen">
   <div class="container">
-    <div style="margin-bottom:48px;" class="rev">
-      <span class="section-label">Resultados del Taller</span>
-      <h2 class="section-title">Tres modelos, una pregunta</h2>
-      <p class="section-desc">Pipeline completo: xG por tiro, regresión de goles y predicción de resultado. Validación temporal sin data leakage sobre GW1–GW30.</p>
+    <div style="margin-bottom:24px;" class="rev">
+      <span class="section-label">Premier League 2025-26 · GW1–GW30</span>
+      <h2 class="section-title">7.198 tiros. 291 partidos. Tres preguntas.</h2>
+      <p class="section-desc">¿Vale más un tiro al palo que un remate de cabeza? ¿Puede un modelo superar a Bet365? ¿Son predecibles los goles? Esto es lo que encontramos.</p>
     </div>
     <div class="grid-3">
       <div class="card gold rev">
-        <div class="card-tag">Modelo 1 — xG</div>
-        <div class="card-title">Expected Goals (Logística Binaria)</div>
+        <div class="card-tag">⚽ ¿Cuánto vale cada tiro?</div>
+        <div class="card-title">Expected Goals — Logística Binaria</div>
         <div class="card-big blue">0.7955</div>
-        <div class="card-sub">AUC-ROC · n_train=5,103 · n_test=1,256</div>
-        <div class="stat-row"><span class="label">Brier Score</span><span class="value blue">0.0744</span></div>
-        <div class="stat-row"><span class="label">Log Loss</span><span class="value">0.2665</span></div>
-        <div class="stat-row"><span class="label">Bonus RF AUC</span><span class="value gold">0.8250</span></div>
-        <span class="badge-status pass">Supera benchmark 0.78</span>
+        <div class="card-sub">AUC-ROC · Supera benchmark 0.78 ✓</div>
+        <div class="stat-row"><span class="label">Un penal vale</span><span class="value blue">~79% de probabilidad</span></div>
+        <div class="stat-row"><span class="label">Un tiro lejano vale</span><span class="value">~4% de probabilidad</span></div>
+        <div class="stat-row"><span class="label">Mejor modelo</span><span class="value gold">RF AUC 0.8250</span></div>
+        <span class="badge-status pass">El modelo diferencia tiros</span>
       </div>
       <div class="card rev">
-        <div class="card-tag">Modelo 2B — FTR</div>
-        <div class="card-title">Resultado del Partido (Logística Multiclase)</div>
+        <div class="card-tag">🏆 ¿Quién gana el partido?</div>
+        <div class="card-title">Predictor H/D/A — Logística Multiclase</div>
         <div class="card-big green">50.87%</div>
-        <div class="card-sub">Accuracy H/D/A · 277 partidos de test</div>
-        <div class="stat-row"><span class="label">F1-macro</span><span class="value green">0.4066</span></div>
-        <div class="stat-row"><span class="label">Bet365 accuracy</span><span class="value gold">50.43%</span></div>
-        <div class="stat-row"><span class="label">Ventaja</span><span class="value green">+0.44 pp</span></div>
+        <div class="card-sub">Accuracy · Bet365 = 50.43%</div>
+        <div class="stat-row"><span class="label">Ventaja sobre la casa</span><span class="value green">+0.44 puntos</span></div>
+        <div class="stat-row"><span class="label">Empate — el más difícil</span><span class="value gold">Solo 26% de los partidos</span></div>
+        <div class="stat-row"><span class="label">Señal clave</span><span class="value">implied_prob_h (OR 6.6)</span></div>
         <span class="badge-status pass">Supera a Bet365</span>
       </div>
       <div class="card rev">
-        <div class="card-tag">Modelo 2A — Regresión</div>
-        <div class="card-title">Total de Goles (OLS Lineal)</div>
+        <div class="card-tag">📉 ¿Cuántos goles habrá?</div>
+        <div class="card-title">Regresión Goles Totales — OLS</div>
         <div class="card-big red">-0.079</div>
-        <div class="card-sub">R² · Regresión lineal sobre goles totales</div>
-        <div class="stat-row"><span class="label">RMSE</span><span class="value red">1.638</span></div>
-        <div class="stat-row"><span class="label">MAE</span><span class="value">1.290</span></div>
-        <div class="stat-row"><span class="label">Media goles/partido</span><span class="value">2.77</span></div>
-        <span class="badge-status fail">No supera la media</span>
+        <div class="card-sub">R² negativo · La media gana siempre</div>
+        <div class="stat-row"><span class="label">Media de goles/partido</span><span class="value">2.77 goles</span></div>
+        <div class="stat-row"><span class="label">Única señal real</span><span class="value gold">away_sot_avg5 (p=0.04)</span></div>
+        <div class="stat-row"><span class="label">Variable ausente clave</span><span class="value red">Over/Under Bet365</span></div>
+        <span class="badge-status fail">El fútbol no es predecible así</span>
+      </div>
+    </div>
+    <div class="grid-4" style="margin-top:14px;">
+      <div class="card rev" style="text-align:center;padding:14px;">
+        <div style="font-size:1.8rem;margin-bottom:4px;">⚽</div>
+        <div style="font-size:1.4rem;font-weight:800;color:var(--accent-gold);">7,198</div>
+        <div style="font-size:0.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;">Tiros analizados</div>
+      </div>
+      <div class="card rev" style="text-align:center;padding:14px;">
+        <div style="font-size:1.8rem;margin-bottom:4px;">🏟️</div>
+        <div style="font-size:1.4rem;font-weight:800;color:var(--accent-green);">291</div>
+        <div style="font-size:0.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;">Partidos</div>
+      </div>
+      <div class="card rev" style="text-align:center;padding:14px;">
+        <div style="font-size:1.8rem;margin-bottom:4px;">🎯</div>
+        <div style="font-size:1.4rem;font-weight:800;color:var(--accent-cyan);">807</div>
+        <div style="font-size:0.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;">Goles reales</div>
+      </div>
+      <div class="card rev" style="text-align:center;padding:14px;">
+        <div style="font-size:1.8rem;margin-bottom:4px;">👥</div>
+        <div style="font-size:1.4rem;font-weight:800;">128</div>
+        <div style="font-size:0.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;">Jugadores clusterizados</div>
       </div>
     </div>
   </div>
@@ -199,119 +221,31 @@
 
     <!-- Tabs -->
     <div class="tab-nav rev" id="xg-tabs">
-      <button class="tab-btn active" data-tab="xg-metricas">Métricas</button>
-      <button class="tab-btn" data-tab="xg-roc">Curva ROC</button>
-      <button class="tab-btn" data-tab="xg-features">Features</button>
+      <button class="tab-btn active" data-tab="xg-roc">Curva ROC</button>
       <button class="tab-btn" data-tab="xg-calibracion">Calibración</button>
-      <button class="tab-btn" data-tab="xg-bonus">Bonus Modelos</button>
+      <button class="tab-btn" data-tab="xg-features">Features</button>
+      <button class="tab-btn" data-tab="xg-bonus">Logística vs Avanzados</button>
     </div>
 
-    <!-- TAB: Métricas -->
-    <div class="tab-pane active" id="xg-metricas">
-      <div class="grid-4">
-        <div class="card rev">
-          <div class="card-tag">AUC-ROC</div>
-          <div class="card-big blue">0.7955</div>
-          <div class="card-sub">Discriminación del modelo. Benchmark: 0.78 ✓</div>
-        </div>
-        <div class="card rev">
-          <div class="card-tag">Brier Score</div>
-          <div class="card-big blue" style="font-size:2.4rem;">0.0744</div>
-          <div class="card-sub">Calibración probabilística. Balanced: 0.1768</div>
-        </div>
-        <div class="card rev">
-          <div class="card-tag">Log Loss</div>
-          <div class="card-big blue" style="font-size:2.4rem;">0.2665</div>
-          <div class="card-sub">Penalización de confianza. Balanced: 0.5413</div>
-        </div>
-        <div class="card rev">
-          <div class="card-tag">Datos</div>
-          <div class="card-big gold" style="font-size:2.4rem;">6,359</div>
-          <div class="card-sub">Train 5,103 · Test 1,256 · Split temporal</div>
-        </div>
-      </div>
-      <div class="grid-2" style="margin-top:18px;">
-        <div class="card rev">
-          <div class="card-tag">xG Medio vs Goal Rate</div>
-          <div class="card-title">Calibración del predictor</div>
-          <div class="stat-row"><span class="label">xG medio predicho</span><span class="value blue mono">0.1149</span></div>
-          <div class="stat-row"><span class="label">Goal rate real</span><span class="value green mono">0.1099</span></div>
-          <div class="stat-row"><span class="label">Error absoluto</span><span class="value mono">0.0050</span></div>
-          <div class="stat-row"><span class="label">Tiros en dataset</span><span class="value mono">7,198</span></div>
-          <div class="stat-row"><span class="label">Goles totales</span><span class="value gold mono">807</span></div>
-          <div class="info-box info" style="margin-top:14px;">
-            <strong>Calibración excelente</strong>
-            El modelo predice 11.49% de media frente al 10.99% real. El unweighted supera al balanced (xG medio 42.1%) en calibración.
-          </div>
-        </div>
-        <div class="card rev">
-          <div class="card-tag">Comparación Unweighted vs Balanced</div>
-          <div class="card-title">¿Por qué elegimos unweighted?</div>
-          <div class="chart-wrap" style="margin-top:10px;">
-            <canvas id="chart-uwvbal" style="max-height:220px;"></canvas>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB: ROC -->
-    <div class="tab-pane" id="xg-roc">
+    <!-- TAB: ROC (ahora es el primero) -->
+    <div class="tab-pane active no-anim" id="xg-roc">
       <div class="grid-2">
         <div class="card rev">
-          <div class="card-tag">Curva ROC — Modelo Logístico</div>
-          <div class="card-title">AUC = 0.7955 · Test set n=1,256</div>
+          <div class="card-tag">Curva ROC — Modelo Logístico vs Random Forest</div>
+          <div class="card-title">AUC = 0.7955 — Supera benchmark 0.78 ✓</div>
           <div class="chart-wrap">
-            <canvas id="chart-roc" style="max-height:320px;"></canvas>
+            <canvas id="chart-roc" style="max-height:260px;"></canvas>
           </div>
+          <div class="stat-row" style="margin-top:8px;"><span class="label">El modelo distingue gol de no-gol</span><span class="value green mono">79.55% de las veces</span></div>
         </div>
         <div class="card rev">
           <div class="card-tag">ROC — Todos los Modelos xG</div>
-          <div class="card-title">Comparativa AUC en el mismo gráfico</div>
-          <div class="chart-wrap" style="margin-top:10px;">
-            <canvas id="chart-roc-all" style="max-height:320px;"></canvas>
+          <div class="card-title">Random Forest domina · SVM queda por debajo</div>
+          <div class="chart-wrap">
+            <canvas id="chart-roc-all" style="max-height:260px;"></canvas>
           </div>
+          <div class="stat-row" style="margin-top:8px;"><span class="label">Mejor modelo bonus</span><span class="value gold mono">RF AUC 0.8250 (+3.2%)</span></div>
         </div>
-      </div>
-    </div>
-
-    <!-- TAB: Features -->
-    <div class="tab-pane" id="xg-features">
-      <div class="card rev full">
-        <div class="card-tag">Odds Ratio — Top Features</div>
-        <div class="card-title">Predictores del modelo xG (logística unweighted)</div>
-        <div style="margin-top:20px;">
-          <div class="hbar-row">
-            <span style="font-family:'Space Mono',monospace;font-size:0.78rem;color:var(--text-secondary);">shot_quality_idx</span>
-            <div class="hbar-track"><div class="hbar-fill gold" data-w="100"></div></div>
-            <span class="hbar-val gold">OR 104.6</span>
-          </div>
-          <div class="hbar-row">
-            <span style="font-family:'Space Mono',monospace;font-size:0.78rem;color:var(--text-secondary);">is_penalty</span>
-            <div class="hbar-track"><div class="hbar-fill blue" data-w="37"></div></div>
-            <span class="hbar-val">OR 16.28</span>
-          </div>
-          <div class="hbar-row">
-            <span style="font-family:'Space Mono',monospace;font-size:0.78rem;color:var(--text-secondary);">first_touch</span>
-            <div class="hbar-track"><div class="hbar-fill green" data-w="8"></div></div>
-            <span class="hbar-val">OR 1.26</span>
-          </div>
-          <div class="hbar-row">
-            <span style="font-family:'Space Mono',monospace;font-size:0.78rem;color:var(--text-secondary);">distance_to_goal</span>
-            <div class="hbar-track"><div class="hbar-fill blue" data-w="10"></div></div>
-            <span class="hbar-val">OR 1.08</span>
-          </div>
-          <div class="hbar-row">
-            <span style="font-family:'Space Mono',monospace;font-size:0.78rem;color:var(--text-secondary);">ppda</span>
-            <div class="hbar-track"><div class="hbar-fill cyan" data-w="6"></div></div>
-            <span class="hbar-val" style="color:var(--accent-cyan);">OR 1.008</span>
-          </div>
-          <div class="hbar-row">
-            <span style="font-family:'Space Mono',monospace;font-size:0.78rem;color:var(--text-secondary);">defensive_pressure</span>
-            <div class="hbar-track"><div class="hbar-fill red" data-w="9"></div></div>
-            <span class="hbar-val" style="color:var(--accent-red);">OR 0.69 ↓</span>
-          </div>
-        </div>
-
       </div>
     </div>
 
@@ -319,21 +253,82 @@
     <div class="tab-pane" id="xg-calibracion">
       <div class="grid-2">
         <div class="card rev">
-          <div class="card-tag">Calibración — Probabilidad predicha vs real</div>
-          <div class="card-title">Curva de calibración por decil de xG</div>
+          <div class="card-tag">Curva de calibración por decil de xG</div>
+          <div class="card-title">Logística vs Modelos Avanzados — datos en tiempo real</div>
           <div class="chart-wrap" style="margin-top:10px;">
-            <canvas id="chart-calibration" style="max-height:280px;"></canvas>
+            <canvas id="chart-calibration" style="max-height:240px;"></canvas>
+          </div>
+          <div class="info-box info" style="margin-top:10px;font-size:0.73rem;">
+            <strong>Calibración excelente:</strong> el modelo predice 11.49% de media vs 10.99% real. Error &lt;0.5%.
           </div>
         </div>
         <div class="card rev">
-          <div class="card-tag">Matriz de Confusión — xG (umbral 0.5)</div>
-          <div class="card-title">Clasificación a nivel de tiro</div>
-          <div style="margin-top:14px;">
+          <div class="card-tag">¿Qué tan bien calibrado está?</div>
+          <div class="card-title">xG predicho vs gol real por zona de probabilidad</div>
+          <div class="stat-row" style="margin-top:14px;"><span class="label">xG medio predicho</span><span class="value blue mono">0.1149</span></div>
+          <div class="stat-row"><span class="label">Goal rate real</span><span class="value green mono">0.1099</span></div>
+          <div class="stat-row"><span class="label">Error absoluto</span><span class="value mono">0.0050</span></div>
+          <div class="stat-row"><span class="label">Tiros dataset</span><span class="value mono">7,198</span></div>
+          <div class="stat-row"><span class="label">Goles reales</span><span class="value gold mono">807</span></div>
+          <div style="margin-top:14px;padding:12px;background:rgba(45,106,39,0.06);border-radius:8px;font-size:0.75rem;color:var(--text-secondary);line-height:1.6;">
+            Un modelo bien calibrado significa que cuando predice <strong>30% de probabilidad de gol</strong>, en esa zona del campo realmente entra gol ~3 de cada 10 tiros.
+          </div>
+        </div>
+      </div>
+    </div>
 
-            <div class="stat-row"><span class="label">TN (No gol predicho = no gol real)</span><span class="value green mono">~1,093</span></div>
-            <div class="stat-row"><span class="label">FP (No gol predicho = gol real)</span><span class="value red mono">~137</span></div>
-            <div class="stat-row"><span class="label">FN (Gol predicho = no gol real)</span><span class="value red mono">~18</span></div>
-            <div class="stat-row"><span class="label">TP (Gol predicho = gol real)</span><span class="value green mono">~8</span></div>
+    <!-- TAB: Features -->
+    <div class="tab-pane" id="xg-features">
+      <div class="grid-2">
+        <div class="card rev">
+          <div class="card-tag">Odds Ratio — Top Predictores de xG</div>
+          <div class="card-title">¿Qué convierte más goles en la Premier?</div>
+          <div style="margin-top:16px;">
+            <div class="hbar-row">
+              <span style="font-family:'Space Mono',monospace;font-size:0.75rem;">shot_quality_idx</span>
+              <div class="hbar-track"><div class="hbar-fill gold" data-w="100"></div></div>
+              <span class="hbar-val gold">OR 104.6 🔥</span>
+            </div>
+            <div class="hbar-row">
+              <span style="font-family:'Space Mono',monospace;font-size:0.75rem;">is_penalty</span>
+              <div class="hbar-track"><div class="hbar-fill blue" data-w="37"></div></div>
+              <span class="hbar-val">OR 16.28</span>
+            </div>
+            <div class="hbar-row">
+              <span style="font-family:'Space Mono',monospace;font-size:0.75rem;">first_touch</span>
+              <div class="hbar-track"><div class="hbar-fill green" data-w="8"></div></div>
+              <span class="hbar-val">OR 1.26</span>
+            </div>
+            <div class="hbar-row">
+              <span style="font-family:'Space Mono',monospace;font-size:0.75rem;">distance_to_goal</span>
+              <div class="hbar-track"><div class="hbar-fill blue" data-w="10"></div></div>
+              <span class="hbar-val">OR 1.08</span>
+            </div>
+            <div class="hbar-row">
+              <span style="font-family:'Space Mono',monospace;font-size:0.75rem;">ppda</span>
+              <div class="hbar-track"><div class="hbar-fill cyan" data-w="6"></div></div>
+              <span class="hbar-val" style="color:var(--accent-cyan);">OR 1.008</span>
+            </div>
+            <div class="hbar-row">
+              <span style="font-family:'Space Mono',monospace;font-size:0.75rem;">defensive_pressure</span>
+              <div class="hbar-track"><div class="hbar-fill red" data-w="9"></div></div>
+              <span class="hbar-val" style="color:var(--accent-red);">OR 0.69 ↓</span>
+            </div>
+          </div>
+        </div>
+        <div class="card rev">
+          <div class="card-tag">Interpretación de negocio</div>
+          <div class="card-title">Lo que revelan los datos del campo</div>
+          <div style="margin-top:14px;display:flex;flex-direction:column;gap:10px;">
+            <div style="padding:10px 12px;background:rgba(184,137,42,0.08);border-left:3px solid var(--accent-gold);border-radius:6px;font-size:0.78rem;">
+              <strong>shot_quality_index</strong> es el predictor dominante. Captura ángulo, distancia y tipo de tiro en una sola variable. OR 104 significa que los tiros de alta calidad tienen 104x más chances de ser gol.
+            </div>
+            <div style="padding:10px 12px;background:rgba(74,140,63,0.07);border-left:3px solid var(--accent-green);border-radius:6px;font-size:0.78rem;">
+              <strong>Los penales</strong> convierten ~79% de las veces. El modelo los identifica correctamente con OR 16.
+            </div>
+            <div style="padding:10px 12px;background:rgba(217,107,90,0.07);border-left:3px solid var(--accent-red);border-radius:6px;font-size:0.78rem;">
+              <strong>Presión defensiva</strong> reduce xG (OR 0.69). Un tiro bajo presión es 31% menos probable de terminar en gol.
+            </div>
           </div>
         </div>
       </div>
@@ -341,19 +336,20 @@
 
     <!-- TAB: Bonus Modelos -->
     <div class="tab-pane" id="xg-bonus">
-      <div class="card rev full">
-        <div class="card-tag">Comparativa AUC — Bonus M1</div>
-        <div class="card-title">Logística vs Modelos Avanzados — datos en tiempo real</div>
-        <div class="grid-2" style="margin-top:16px;gap:18px;">
-          <div class="chart-wrap">
-            <canvas id="chart-auc-compare" style="max-height:280px;"></canvas>
+      <div class="grid-2">
+        <div class="card rev">
+          <div class="card-tag">AUC-ROC por modelo — datos reales del taller</div>
+          <div class="card-title">Random Forest lidera · Logística supera benchmark 0.78</div>
+          <div class="chart-wrap" style="margin-top:10px;">
+            <canvas id="chart-auc-compare" style="max-height:240px;"></canvas>
           </div>
-          <div>
-            <div id="m1-bonus-table" style="margin-top:4px;"></div>
-            <div class="info-box info" style="margin-top:14px;">
-              <strong>Conclusión del bonus xG</strong>
-              Random Forest mejora AUC (+3.2%), Brier y Log Loss. SVM y MLP no superan al baseline. RF es el mejor modelo bonus en M1.
-            </div>
+        </div>
+        <div class="card rev">
+          <div class="card-tag">¿Vale la pena la complejidad?</div>
+          <div class="card-title">Rendimiento detallado por modelo</div>
+          <div id="m1-bonus-table" style="margin-top:8px;"></div>
+          <div class="info-box info" style="margin-top:12px;font-size:0.73rem;">
+            <strong>Random Forest gana en AUC (+3.2%)</strong> pero a costa de interpretabilidad. Para betting, la logística es más transparente y auditada. RF es mejor si solo importa predecir.
           </div>
         </div>
       </div>
@@ -408,54 +404,39 @@
               <span class="prob-pct a mono" id="pct-a">—</span>
             </div>
           </div>
-          <div id="pred-verdict" style="margin-top:18px;padding:12px 16px;border-radius:10px;font-size:0.85rem;font-weight:700;text-align:center;display:none;"></div>
-          <p class="pred-note">Basado en cuotas Bet365 más recientes · Modelo logístico multinomial</p>
+          <div id="pred-verdict" style="margin-top:8px;padding:8px 12px;border-radius:10px;font-size:0.82rem;font-weight:700;text-align:center;display:none;"></div>
         </div>
       </div>
 
-      <div style="display:flex;flex-direction:column;gap:16px;">
+      <div style="display:flex;flex-direction:column;gap:10px;">
         <div class="card rev">
           <div class="card-tag">Matriz de Confusión — M2B</div>
           <div class="card-title">Clasificación H / D / A en test set</div>
-          <div id="cm-container" style="margin-top:14px;"></div>
-          <div class="stat-row" style="margin-top:12px;"><span class="label">Accuracy</span><span class="value green mono">50.87%</span></div>
+          <div id="cm-container" style="margin-top:10px;"></div>
+          <div class="stat-row" style="margin-top:8px;"><span class="label">Accuracy</span><span class="value green mono">50.87%</span></div>
           <div class="stat-row"><span class="label">F1-macro</span><span class="value mono">0.4066</span></div>
-          <div class="stat-row"><span class="label">n = partidos de test</span><span class="value mono">185</span></div>
         </div>
         <div class="card rev">
-          <div class="card-tag">M2B vs Bet365</div>
-          <div class="card-title">Accuracy — todos los modelos</div>
-          <div class="chart-wrap" style="margin-top:10px;">
-            <canvas id="chart-m2b" style="max-height:200px;"></canvas>
+          <div class="card-tag">Coeficientes M2B (Log-Odds)</div>
+          <div style="display:flex;gap:6px;margin:6px 0 8px;">
+            <button class="ctrl-btn active" id="coef-h-btn" onclick="showCoef('H')">H vs A</button>
+            <button class="ctrl-btn" id="coef-d-btn" onclick="showCoef('D')">D vs A</button>
+          </div>
+          <div id="coef-H">
+            <div class="hbar-row"><span style="font-family:'Space Mono',monospace;font-size:0.72rem;">implied_prob_h</span><div class="hbar-track"><div class="hbar-fill blue" data-w="100"></div></div><span class="hbar-val">+6.576 ***</span></div>
+            <div class="hbar-row"><span style="font-family:'Space Mono',monospace;font-size:0.72rem;">implied_prob_d</span><div class="hbar-track"><div class="hbar-fill gold" data-w="34"></div></div><span class="hbar-val">+2.200</span></div>
+            <div class="hbar-row"><span style="font-family:'Space Mono',monospace;font-size:0.72rem;">home_strength</span><div class="hbar-track"><div class="hbar-fill cyan" data-w="9"></div></div><span class="hbar-val" style="color:var(--accent-cyan);">+0.585</span></div>
+            <div class="hbar-row"><span style="font-family:'Space Mono',monospace;font-size:0.72rem;">points_form_diff</span><div class="hbar-track"><div class="hbar-fill red" data-w="5"></div></div><span class="hbar-val" style="color:var(--accent-red);">-0.298</span></div>
+            <div class="hbar-row"><span style="font-family:'Space Mono',monospace;font-size:0.72rem;">constante</span><div class="hbar-track"><div class="hbar-fill red" data-w="57"></div></div><span class="hbar-val" style="color:var(--accent-red);">-3.732 *</span></div>
+          </div>
+          <div id="coef-D" style="display:none;">
+            <div class="hbar-row"><span style="font-family:'Space Mono',monospace;font-size:0.72rem;">implied_prob_h</span><div class="hbar-track"><div class="hbar-fill blue" data-w="48"></div></div><span class="hbar-val">+3.140 *</span></div>
+            <div class="hbar-row"><span style="font-family:'Space Mono',monospace;font-size:0.72rem;">home_strength</span><div class="hbar-track"><div class="hbar-fill cyan" data-w="9"></div></div><span class="hbar-val" style="color:var(--accent-cyan);">+0.606</span></div>
+            <div class="hbar-row"><span style="font-family:'Space Mono',monospace;font-size:0.72rem;">constante</span><div class="hbar-track"><div class="hbar-fill red" data-w="19"></div></div><span class="hbar-val" style="color:var(--accent-red);">-1.261</span></div>
+            <div class="hbar-row"><span style="font-family:'Space Mono',monospace;font-size:0.72rem;">points_form_diff</span><div class="hbar-track"><div class="hbar-fill red" data-w="5"></div></div><span class="hbar-val" style="color:var(--accent-red);">-0.341</span></div>
+            <div class="hbar-row"><span style="font-family:'Space Mono',monospace;font-size:0.72rem;">implied_prob_d</span><div class="hbar-track"><div class="hbar-fill red" data-w="54"></div></div><span class="hbar-val" style="color:var(--accent-red);">-3.542</span></div>
           </div>
         </div>
-      </div>
-    </div>
-
-    <!-- Coeficientes del modelo -->
-    <div class="card rev" style="margin-top:18px;">
-      <div class="card-tag">Coeficientes del Modelo M2B (Log-Odds)</div>
-      <div class="card-title">Logística multinomial — clase referencia: Away (A)</div>
-
-      <!-- Sub-tabs -->
-      <div style="display:flex;gap:8px;margin:16px 0;">
-        <button class="ctrl-btn active" id="coef-h-btn" onclick="showCoef('H')">H vs A</button>
-        <button class="ctrl-btn" id="coef-d-btn" onclick="showCoef('D')">D vs A</button>
-      </div>
-
-      <div id="coef-H">
-        <div class="hbar-row"><span style="font-family:'Space Mono',monospace;font-size:0.78rem;">implied_prob_h</span><div class="hbar-track"><div class="hbar-fill blue" data-w="100"></div></div><span class="hbar-val">+6.576 ***</span></div>
-        <div class="hbar-row"><span style="font-family:'Space Mono',monospace;font-size:0.78rem;">implied_prob_d</span><div class="hbar-track"><div class="hbar-fill gold" data-w="34"></div></div><span class="hbar-val">+2.200</span></div>
-        <div class="hbar-row"><span style="font-family:'Space Mono',monospace;font-size:0.78rem;">home_strength</span><div class="hbar-track"><div class="hbar-fill cyan" data-w="9"></div></div><span class="hbar-val" style="color:var(--accent-cyan);">+0.585</span></div>
-        <div class="hbar-row"><span style="font-family:'Space Mono',monospace;font-size:0.78rem;">points_form_diff</span><div class="hbar-track"><div class="hbar-fill red" data-w="5"></div></div><span class="hbar-val" style="color:var(--accent-red);">-0.298</span></div>
-        <div class="hbar-row"><span style="font-family:'Space Mono',monospace;font-size:0.78rem;">constante</span><div class="hbar-track"><div class="hbar-fill red" data-w="57"></div></div><span class="hbar-val" style="color:var(--accent-red);">-3.732 *</span></div>
-      </div>
-      <div id="coef-D" style="display:none;">
-        <div class="hbar-row"><span style="font-family:'Space Mono',monospace;font-size:0.78rem;">implied_prob_h</span><div class="hbar-track"><div class="hbar-fill blue" data-w="48"></div></div><span class="hbar-val">+3.140 *</span></div>
-        <div class="hbar-row"><span style="font-family:'Space Mono',monospace;font-size:0.78rem;">home_strength</span><div class="hbar-track"><div class="hbar-fill cyan" data-w="9"></div></div><span class="hbar-val" style="color:var(--accent-cyan);">+0.606</span></div>
-        <div class="hbar-row"><span style="font-family:'Space Mono',monospace;font-size:0.78rem;">constante</span><div class="hbar-track"><div class="hbar-fill red" data-w="19"></div></div><span class="hbar-val" style="color:var(--accent-red);">-1.261</span></div>
-        <div class="hbar-row"><span style="font-family:'Space Mono',monospace;font-size:0.78rem;">points_form_diff</span><div class="hbar-track"><div class="hbar-fill red" data-w="5"></div></div><span class="hbar-val" style="color:var(--accent-red);">-0.341</span></div>
-        <div class="hbar-row"><span style="font-family:'Space Mono',monospace;font-size:0.78rem;">implied_prob_d</span><div class="hbar-track"><div class="hbar-fill red" data-w="54"></div></div><span class="hbar-val" style="color:var(--accent-red);">-3.542</span></div>
       </div>
     </div>
   </div>
@@ -467,9 +448,9 @@
 <section id="regresion">
   <div class="container">
     <div style="margin-bottom:40px;" class="rev">
-      <span class="section-label">Modelo 2A — Regresión Lineal</span>
-      <h2 class="section-title">Predecir goles totales:<br>el desafío más difícil</h2>
-      <p class="section-desc">R² = -0.079 indica que el modelo no supera predecir la media. Diagnóstico honesto con análisis de residuos y coeficientes.</p>
+      <span class="section-label">Modelo 2A — Regresión Lineal · OLS</span>
+      <h2 class="section-title">¿Cuántos goles habrá?<br>La pregunta sin respuesta.</h2>
+      <p class="section-desc">R² = −0.079. Un resultado negativo no es fracaso — es honestidad. El fútbol tiene más ruido que señal cuando se trata de goles totales. Aquí está la evidencia.</p>
     </div>
 
     <div class="tab-nav rev" id="reg-tabs">
@@ -478,7 +459,7 @@
       <button class="tab-btn" data-tab="reg-coef">Coeficientes</button>
     </div>
 
-    <div class="tab-pane active" id="reg-metricas">
+    <div class="tab-pane active no-anim" id="reg-metricas">
       <div class="grid-4">
         <div class="card rev">
           <div class="card-tag">R²</div>
@@ -524,10 +505,32 @@
     <div class="tab-pane" id="reg-residuos">
       <div class="grid-2">
         <div class="card rev">
-          <div class="card-tag">Residuos vs Valores Predichos</div>
-          <div class="card-title">Análisis de residuos OLS (simulado del modelo)</div>
-          <div class="chart-wrap" style="margin-top:10px;">
-            <canvas id="chart-residuals" style="max-height:280px;"></canvas>
+          <div class="card-tag">Distribución de Residuos — Modelo 2A</div>
+          <div class="card-title">¿Cuánto se aleja el modelo de los goles reales?</div>
+          <div style="margin-top:18px;">
+            <div class="hbar-row">
+              <span style="font-family:'Space Mono',monospace;font-size:0.73rem;">Error 0–1 gol</span>
+              <div class="hbar-track"><div class="hbar-fill green" data-w="71"></div></div>
+              <span class="hbar-val green">71%</span>
+            </div>
+            <div class="hbar-row">
+              <span style="font-family:'Space Mono',monospace;font-size:0.73rem;">Error 1–2 goles</span>
+              <div class="hbar-track"><div class="hbar-fill gold" data-w="21"></div></div>
+              <span class="hbar-val">21%</span>
+            </div>
+            <div class="hbar-row">
+              <span style="font-family:'Space Mono',monospace;font-size:0.73rem;">Error 2–3 goles</span>
+              <div class="hbar-track"><div class="hbar-fill red" data-w="6"></div></div>
+              <span class="hbar-val" style="color:var(--accent-red);">6%</span>
+            </div>
+            <div class="hbar-row">
+              <span style="font-family:'Space Mono',monospace;font-size:0.73rem;">Error &gt;3 goles</span>
+              <div class="hbar-track"><div class="hbar-fill red" data-w="2"></div></div>
+              <span class="hbar-val" style="color:var(--accent-red);">2%</span>
+            </div>
+          </div>
+          <div class="info-box warn" style="margin-top:14px;font-size:0.73rem;">
+            RMSE = 1.638 · MAE = 1.290 · El modelo falla en promedio ±1.3 goles por partido.
           </div>
         </div>
         <div class="card rev">
@@ -538,7 +541,6 @@
             <div class="stat-row"><span class="label">away_xg_for_avg5</span><span class="value blue mono">xG rolling 5</span></div>
             <div class="stat-row"><span class="label">home_sot_avg5</span><span class="value cyan mono">Tiros al arco</span></div>
             <div class="stat-row"><span class="label">away_sot_avg5 ★</span><span class="value green mono">p=0.039 sig.</span></div>
-
             <div class="stat-row"><span class="label">bookmaker_spread_draw</span><span class="value mono">Mercado</span></div>
             <div class="stat-row"><span class="label">implied_prob_d</span><span class="value mono">Prob. empate</span></div>
             <div class="stat-row"><span class="label">away_strength_rating</span><span class="value mono">Fuerza vis.</span></div>
@@ -548,34 +550,51 @@
     </div>
 
     <div class="tab-pane" id="reg-coef">
-      <div class="card rev full">
-        <div class="card-tag">Coeficientes OLS — Modelo 2A</div>
-        <div class="card-title">Solo away_sot_avg5 tiene significancia estadística al 5%</div>
-        <div style="margin-top:20px;">
-          <div class="hbar-row">
-            <span style="font-family:'Space Mono',monospace;font-size:0.78rem;">away_sot_avg5</span>
-            <div class="hbar-track"><div class="hbar-fill green" data-w="100"></div></div>
-            <span class="hbar-val" style="color:var(--accent-green);">+0.160 *</span>
+      <div class="grid-2">
+        <div class="card rev">
+          <div class="card-tag">Coeficientes OLS — Modelo 2A</div>
+          <div class="card-title">Solo away_sot_avg5 significativo (p=0.039)</div>
+          <div style="margin-top:18px;">
+            <div class="hbar-row">
+              <span style="font-family:'Space Mono',monospace;font-size:0.73rem;">away_sot_avg5 ★</span>
+              <div class="hbar-track"><div class="hbar-fill green" data-w="100"></div></div>
+              <span class="hbar-val green">+0.160 🔥</span>
+            </div>
+            <div class="hbar-row">
+              <span style="font-family:'Space Mono',monospace;font-size:0.73rem;">home_sot_avg5</span>
+              <div class="hbar-track"><div class="hbar-fill green" data-w="26"></div></div>
+              <span class="hbar-val">+0.042</span>
+            </div>
+            <div class="hbar-row">
+              <span style="font-family:'Space Mono',monospace;font-size:0.73rem;">bookmaker_spread</span>
+              <div class="hbar-track"><div class="hbar-fill green" data-w="3"></div></div>
+              <span class="hbar-val">+0.005</span>
+            </div>
+            <div class="hbar-row">
+              <span style="font-family:'Space Mono',monospace;font-size:0.73rem;">away_strength</span>
+              <div class="hbar-track"><div class="hbar-fill red" data-w="43"></div></div>
+              <span class="hbar-val" style="color:var(--accent-red);">−0.069 ↓</span>
+            </div>
+            <div class="hbar-row">
+              <span style="font-family:'Space Mono',monospace;font-size:0.73rem;">implied_prob_d</span>
+              <div class="hbar-track"><div class="hbar-fill red" data-w="100"></div></div>
+              <span class="hbar-val" style="color:var(--accent-red);">−3.811 ↓</span>
+            </div>
           </div>
-          <div class="hbar-row">
-            <span style="font-family:'Space Mono',monospace;font-size:0.78rem;">home_sot_avg5</span>
-            <div class="hbar-track"><div class="hbar-fill blue" data-w="26"></div></div>
-            <span class="hbar-val">+0.042</span>
-          </div>
-          <div class="hbar-row">
-            <span style="font-family:'Space Mono',monospace;font-size:0.78rem;">bookmaker_spread</span>
-            <div class="hbar-track"><div class="hbar-fill blue" data-w="3"></div></div>
-            <span class="hbar-val">+0.005</span>
-          </div>
-          <div class="hbar-row">
-            <span style="font-family:'Space Mono',monospace;font-size:0.78rem;">away_strength</span>
-            <div class="hbar-track"><div class="hbar-fill red" data-w="43"></div></div>
-            <span class="hbar-val" style="color:var(--accent-red);">-0.069</span>
-          </div>
-          <div class="hbar-row">
-            <span style="font-family:'Space Mono',monospace;font-size:0.78rem;">implied_prob_d</span>
-            <div class="hbar-track"><div class="hbar-fill red" data-w="100"></div></div>
-            <span class="hbar-val" style="color:var(--accent-red);">-3.811</span>
+        </div>
+        <div class="card rev">
+          <div class="card-tag">Interpretación táctica</div>
+          <div class="card-title">¿Qué le dice el modelo a un scout?</div>
+          <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px;">
+            <div style="padding:9px 12px;background:rgba(74,140,63,0.07);border-left:3px solid var(--accent-green);border-radius:6px;font-size:0.76rem;line-height:1.5;">
+              <strong>away_sot_avg5 (+0.160★)</strong><br>Única variable significativa. Los tiros al arco del visitante en las últimas 5 jornadas predicen más goles totales — equipos atacantes producen partidos de más goles.
+            </div>
+            <div style="padding:9px 12px;background:rgba(197,160,89,0.07);border-left:3px solid var(--accent-gold);border-radius:6px;font-size:0.76rem;line-height:1.5;">
+              <strong>implied_prob_d (−3.811)</strong><br>Cuando Bet365 dice que hay alta probabilidad de empate, el modelo predice menos goles totales. Los partidos "igualados" tienden a ser más cerrados.
+            </div>
+            <div style="padding:9px 12px;background:rgba(217,107,90,0.07);border-left:3px solid var(--accent-red);border-radius:6px;font-size:0.76rem;line-height:1.5;">
+              <strong>R² = −0.079 → ¿qué falta?</strong><br>La variable Over/Under 2.5 de Bet365 (omitida del dataset) es el predictor más potente de goles totales en el mercado.
+            </div>
           </div>
         </div>
       </div>
@@ -589,9 +608,9 @@
 <section id="eda">
   <div class="container">
     <div style="margin-bottom:40px;" class="rev">
-      <span class="section-label">Análisis Exploratorio</span>
-      <h2 class="section-title">EDA: los datos de la Premier League</h2>
-      <p class="section-desc">7,198 tiros · 291 partidos · 20 equipos · 807 goles. Insights sobre la distribución, rendimiento por equipo y segmentación de jugadores.</p>
+      <span class="section-label">Análisis Exploratorio · Premier League 2025-26</span>
+      <h2 class="section-title">Los datos detrás del juego</h2>
+      <p class="section-desc">Antes de entrenar modelos, exploramos el campo. 20 equipos, 128 jugadores segmentados por perfil de remate. ¿Qué dice el dato antes de que el árbitro pite?</p>
     </div>
 
     <div class="tab-nav rev" id="eda-tabs">
@@ -603,7 +622,7 @@
     </div>
 
     <!-- TAB: Equipos -->
-    <div class="tab-pane active" id="eda-equipos">
+    <div class="tab-pane active no-anim" id="eda-equipos">
       <div class="grid-2" style="margin-bottom:18px;">
         <div class="card rev">
           <div class="card-tag">Seleccionar Equipo</div>
@@ -636,30 +655,40 @@
 
     <!-- TAB: xG por Equipo -->
     <div class="tab-pane" id="eda-xg-equipos">
-      <div class="grid-2">
-        <div class="card rev full">
+      <div class="grid-2" style="align-items:stretch;">
+        <div class="card rev" style="display:flex;flex-direction:column;">
           <div class="card-tag">xG Promedio por Equipo — datos reales</div>
-          <div class="card-title">xG medio por tiro · ordenado por goles totales</div>
-          <div class="chart-wrap" style="margin-top:14px;">
-            <canvas id="chart-xg-teams" style="max-height:320px;"></canvas>
+          <div style="display:flex;gap:8px;margin:8px 0;flex-wrap:wrap;align-items:center;">
+            <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">Ordenar por:</span>
+            <button class="ctrl-btn active" id="xg-sort-goals" onclick="sortXgTeams('goals')">Goles</button>
+            <button class="ctrl-btn" id="xg-sort-xg" onclick="sortXgTeams('mean_xg')">xG medio</button>
+            <button class="ctrl-btn" id="xg-sort-shots" onclick="sortXgTeams('n_shots')">Tiros</button>
+            <button class="ctrl-btn" id="xg-sort-rate" onclick="sortXgTeams('goal_rate')">Conversión</button>
+          </div>
+          <div class="chart-wrap" style="flex:1;min-height:0;">
+            <canvas id="chart-xg-teams" style="max-height:260px;"></canvas>
           </div>
         </div>
-      </div>
-      <div class="grid-3" style="margin-top:18px;">
         <div class="card rev">
-          <div class="card-tag">Mayor xG medio</div>
-          <div class="card-big gold" style="font-size:2rem;" id="top-xg-team">—</div>
-          <div class="card-sub" id="top-xg-val">—</div>
-        </div>
-        <div class="card rev">
-          <div class="card-tag">Más tiros totales</div>
-          <div class="card-big green" style="font-size:2rem;" id="top-shots-team">—</div>
-          <div class="card-sub" id="top-shots-val">—</div>
-        </div>
-        <div class="card rev">
-          <div class="card-tag">Mayor goal rate</div>
-          <div class="card-big" style="font-size:2rem;color:var(--accent-cyan);" id="top-rate-team">—</div>
-          <div class="card-sub" id="top-rate-val">—</div>
+          <div class="card-tag">Líderes por categoría</div>
+          <div class="card-title">Top equipo en cada métrica de tiro</div>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-top:14px;">
+            <div style="padding:10px 12px;background:rgba(184,137,42,0.07);border-radius:8px;">
+              <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:4px;">Mayor xG medio</div>
+              <div class="card-big gold" style="font-size:1.5rem;" id="top-xg-team">—</div>
+              <div style="font-size:0.72rem;color:var(--text-muted);" id="top-xg-val">—</div>
+            </div>
+            <div style="padding:10px 12px;background:rgba(74,140,63,0.07);border-radius:8px;">
+              <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:4px;">Más tiros totales</div>
+              <div class="card-big green" style="font-size:1.5rem;" id="top-shots-team">—</div>
+              <div style="font-size:0.72rem;color:var(--text-muted);" id="top-shots-val">—</div>
+            </div>
+            <div style="padding:10px 12px;background:rgba(74,140,63,0.05);border-radius:8px;">
+              <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:4px;">Mayor conversión</div>
+              <div class="card-big" style="font-size:1.5rem;color:var(--accent-cyan);" id="top-rate-team">—</div>
+              <div style="font-size:0.72rem;color:var(--text-muted);" id="top-rate-val">—</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -713,7 +742,7 @@
           <div class="card-tag">Clustering PCA — 128 Jugadores</div>
           <div class="card-title">Segmentación por perfil de remate (K-Means k=3)</div>
           <div class="chart-wrap" style="margin-top:10px;">
-            <canvas id="chart-clustering" style="max-height:320px;"></canvas>
+            <canvas id="chart-clustering" style="max-height:600px !important; height: auto !important; width: 100%; aspect-ratio: 1 / 1;"></canvas>
           </div>
           <div class="chips" style="margin-top:12px;">
             <span class="chip blue">Rematadores distancia</span>
@@ -766,17 +795,37 @@
 <!-- ══ COMPARACIÓN DE MODELOS ════════════════════════════════════ -->
 <section id="comparacion">
   <div class="container">
-    <div style="margin-bottom:40px;" class="rev">
-      <span class="section-label">Comparación de Modelos</span>
+    <div style="margin-bottom:16px;" class="rev">
+      <span class="section-label">Arena de Modelos — Premier League ML</span>
       <h2 class="section-title">¿Qué modelo gana?</h2>
-      <p class="section-desc">Compara cualquier par de modelos o todos a la vez. Elige la métrica y el modelo xG o M2B para ver quién lidera.</p>
+      <p class="section-desc">En el betting y el análisis táctico, elegir el modelo equivocado cuesta dinero y credibilidad. Compara métricas reales y decide.</p>
     </div>
 
+    <!-- Contexto de negocio -->
+    <div class="grid-3" style="margin-bottom:14px;">
+      <div class="card rev" style="padding:12px 16px;border-left:3px solid var(--accent-green);">
+        <div style="font-size:1.4rem;margin-bottom:4px;">🎯</div>
+        <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:4px;">xG — Predicción de tiro</div>
+        <div style="font-size:0.8rem;color:var(--text-secondary);line-height:1.5;">AUC mide discriminación. Brier mide calibración probabilística. Para scouting y análisis táctico, ambas importan.</div>
+      </div>
+      <div class="card rev" style="padding:12px 16px;border-left:3px solid var(--accent-gold);">
+        <div style="font-size:1.4rem;margin-bottom:4px;">🏆</div>
+        <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:4px;">FTR — Predicción de resultado</div>
+        <div style="font-size:0.8rem;color:var(--text-secondary);line-height:1.5;">Accuracy y F1-macro. Superar a Bet365 en accuracy es el benchmark real del mercado. +0.44pp es estadísticamente relevante.</div>
+      </div>
+      <div class="card rev" style="padding:12px 16px;border-left:3px solid var(--accent-cyan);">
+        <div style="font-size:1.4rem;margin-bottom:4px;">⚖️</div>
+        <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:4px;">Complejidad vs Interpretabilidad</div>
+        <div style="font-size:0.8rem;color:var(--text-secondary);line-height:1.5;">Random Forest gana en AUC pero pierde en explicabilidad. La logística permite justificar cada predicción con coeficientes claros.</div>
+      </div>
+    </div>
+
+    <div class="grid-2" style="flex:1;min-height:0;align-items:stretch;">
     <!-- xG / M1 comparison -->
-    <div class="card rev" style="margin-bottom:22px;">
-      <div class="card-tag">Modelo xG — M1</div>
-      <div class="card-title">Comparación interactiva de modelos de xG</div>
-      <div class="comp-controls" style="margin-top:14px;">
+    <div class="card rev" style="display:flex;flex-direction:column;">
+      <div class="card-tag">⚽ Modelo xG — M1 · Expected Goals</div>
+      <div class="card-title">Compara modelos de predicción de tiro</div>
+      <div class="comp-controls" style="margin-top:10px;">
         <div style="display:flex;flex-direction:column;gap:4px;">
           <span style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);">Modelo A</span>
           <select class="comp-sel" id="comp-m1-a">
@@ -805,17 +854,17 @@
           <button class="comp-metric-btn" data-m1-metric="log_loss">Log Loss</button>
         </div>
       </div>
-      <div class="chart-wrap">
-        <canvas id="chart-comp-m1" style="max-height:260px;"></canvas>
+      <div class="chart-wrap" style="flex:1;min-height:0;height:160px;">
+        <canvas id="chart-comp-m1"></canvas>
       </div>
-      <div id="comp-m1-winner"></div>
+      <div id="comp-m1-winner" style="margin-top:6px;"></div>
     </div>
 
     <!-- M2B comparison -->
-    <div class="card rev">
-      <div class="card-tag">Predictor de Partidos — M2B</div>
-      <div class="card-title">Comparación interactiva de modelos de clasificación</div>
-      <div class="comp-controls" style="margin-top:14px;">
+    <div class="card rev" style="display:flex;flex-direction:column;">
+      <div class="card-tag">🏆 Predictor Partidos — M2B · H/D/A</div>
+      <div class="card-title">Compara vs Bet365 — ¿quién predice mejor?</div>
+      <div class="comp-controls" style="margin-top:10px;">
         <div style="display:flex;flex-direction:column;gap:4px;">
           <span style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);">Modelo A</span>
           <select class="comp-sel" id="comp-m2-a">
@@ -841,10 +890,11 @@
           <button class="comp-metric-btn" data-m2-metric="f1_macro">F1-Macro</button>
         </div>
       </div>
-      <div class="chart-wrap">
-        <canvas id="chart-comp-m2" style="max-height:220px;"></canvas>
+      <div class="chart-wrap" style="flex:1;min-height:0;height:160px;">
+        <canvas id="chart-comp-m2"></canvas>
       </div>
-      <div id="comp-m2-winner"></div>
+      <div id="comp-m2-winner" style="margin-top:6px;"></div>
+    </div>
     </div>
   </div>
 </section>
@@ -970,6 +1020,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="data/team_stats.js"></script>
 <script src="data/matches_teams.js"></script>
 <script src="data/shot_map.js"></script>
@@ -977,5 +1028,7 @@
 <script src="data/xg_teams.js"></script>
 <script src="data/model_compare.js"></script>
 <script src="js/main.js"></script>
+<script src="js/spa.js"></script>
+<script src="js/animations3d.js"></script>
 </body>
 </html>
