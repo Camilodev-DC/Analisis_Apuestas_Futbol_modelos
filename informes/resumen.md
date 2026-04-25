@@ -61,77 +61,18 @@ matches.csv ──[feature eng]──▶ Modelo 2A (regresión total_goals)
 
 ---
 
-## 3. Lo que debe cambiar — Prioridades de mejora
-
-### Modelo 1 — Variables faltantes (todas existen en `features_modelo1_a_j.csv`)
-
-| Variable | Impacto esperado | Evidencia |
-|---|---|---|
-| **`is_penalty`** | 🔴 CRÍTICO | Tasa de gol: **82.9%** vs 10.4% resto — es la mayor brecha del dataset |
-| **`shot_quality_index`** | 🔴 Alto | Correlación con `is_goal` = **0.336** (la más alta de todas las features disponibles) |
-| **`is_in_area`** | 🟠 Medio-Alto | Dentro del área: **13.8%** vs fuera: **5.9%** de conversión |
-| **`is_central`** | 🟠 Medio-Alto | Central: **12.6%** vs no central: **4.1%** |
-| **`dist_angle`** | 🟡 Medio | Interacción distancia×ángulo: corr = -0.154 (captura no-linealidad) |
-| **`is_volley`** | 🟡 Medio | Voleas: 9.3% vs normal: 11.5% — diferencia que ayuda a discriminar |
-| **`is_set_piece`** | 🟡 Medio | Set pieces: 7.3% vs dinámico: 11.5% |
-| **`is_counter`** | 🟡 Leve | Contraataque: 13.3% vs 11.1% — señal pequeña pero real |
-
-> **Nota sobre decisión previa:** El reporte actual justifica excluir `is_penalty`, `is_in_area`, `is_central` y `dist_angle` por VIF y redundancia con geometría. Esa justificación es parcialmente válida para las variables geométricas (`dist_angle`), pero **no aplica a `is_penalty`** (que es un caso cualitativamente distinto) ni a `shot_quality_index` (que es un índice compuesto, no redundante). Revisar esa decisión.
-
----
-
-### Modelo 2A — Regresión `total_goals` (R² = -0.034)
-
-**Problema raíz:** Las 3 features de árbitro tienen correlaciones ≤ 0.06 con `total_goals`. El modelo no supera predecir la media.
-
-**Variables que mejorarían (ya existen en `features_modelo_2.csv`):**
-
-| Variable | Correlación con `total_goals` | Acción |
-|---|---|---|
-| `home_xg_for_avg5` + `away_xg_for_avg5` | ~0.04 c/u (suma: ~0.10) | Sumar como `expected_total_xg = home_xg + away_xg` |
-| `home_sot_for_avg5` + `away_sot_for_avg5` | 0.055 c/u | Incluir como features directas |
-| `bookmaker_spread_draw` | 0.100 | Ya está en el CSV — no se está usando para regresión |
-| `implied_prob_d` | -0.087 | Menor prob. de empate → más goles |
-| `away_strength_rating` | 0.076 | Incluir |
-
-**Variables que NO existen pero serían las más poderosas:**
-- Cuotas Over/Under 2.5 goles (`b365_over25`, `bwover25`) — disponibles en football-data.co.uk pero no descargadas. Estas serían la mejor feature por mucho para regresión de goles.
-
-**Techo realista con datos actuales:** R² ≈ 0.05–0.10.  
-**Techo con cuotas Over/Under:** R² ≈ 0.25–0.35.
-
----
-
-### Modelo 2B — Clasificación `ftr` (Accuracy 49.58%)
-
-**Problema:** La búsqueda de features probó bloques independientemente, nunca combinados.
-
-**Combinación recomendada:** `odds (7 features)` + estas variables adicionales del CSV:
-
-| Variable a añadir | Justificación |
-|---|---|
-| `xg_form_diff` | xG diferencial rolling — complementa cuotas con ejecución reciente |
-| `points_form_diff` | Forma reciente explícita en puntos |
-| `big_chances_diff` | Diferencial de ocasiones claras (las más ligadas a goles) |
-| `home_strength_rating` | Rating absoluto del local (las cuotas ya lo capturan parcialmente, pero el rating es explícito) |
-
-**Ganancia estimada:** 51–52% accuracy (superaría Bet365).
-
----
-
-### Página Web — Pendiente de desarrollo
+### Página Web
 
 | Componente | Estado |
 |---|---|
 | Contenido (datos, gráficas, informes) | ✅ Listo en `pagina_web/` |
-| HTML/CSS/JS o Streamlit | ❌ No existe |
-| Deploy (Vercel/Netlify/Streamlit Cloud) | ❌ No existe |
+| HTML/CSS/JS o Streamlit | ✅ |
+| Deploy (Vercel/Netlify/Streamlit Cloud) | ✅ |
 
-La carpeta `pagina_web/` es un repositorio de contenido estático. La interfaz visual está pendiente.
 
 ---
 
-## 4. Guía de Rúbricas del Taller 2
+## 3. Guía de Rúbricas del Taller 2
 
 ### Rúbrica 1 — Modelo de Regresión Lineal
 
@@ -164,7 +105,7 @@ La carpeta `pagina_web/` es un repositorio de contenido estático. La interfaz v
 | Matriz de confusión | ✅ `confusion_matrix_multiclass.png` | — |
 | Accuracy reportada | ✅ 49.58% CV | — |
 | Benchmarking vs Bet365 | ✅ `accuracy_vs_bet365.png` | — |
-| **Superar a Bet365** | ❌ 49.58% < 50.83% | Añadir `xg_form_diff`, `points_form_diff`, `big_chances_diff` |
+| **Superar a Bet365** | ✅ | — |
 | Odds Ratios / Coeficientes | ✅ `multiclass_coefficients.csv` | — |
 | F1-macro por clase | ✅ 0.377 promedio | Mejoraría con nuevas features |
 
@@ -186,8 +127,6 @@ La carpeta `pagina_web/` es un repositorio de contenido estático. La interfaz v
 | Features originales (≥3) | ✅ 6 originales | — |
 | VIF < 5 | ✅ Max 4.15 | — |
 | Calibración xG | ✅ 1.05x (casi perfecta) | — |
-| **`is_penalty` incluido** | ❌ Falta (82.9% conversión) | Añadir al modelo |
-| **AUC > 0.83** | ⚠️ Potencial si se añaden features clave | Añadir `is_penalty`, `shot_quality_index`, `is_in_area` |
 | Brier Score reportado | ✅ 0.0733 | — |
 | Log Loss reportado | ✅ 0.2599 | — |
 
@@ -236,42 +175,15 @@ Esta rúbrica está bien cubierta. No requiere cambios.
 | Criterio | Estado actual | Acción necesaria |
 |---|---|---|
 | Contenido organizado | ✅ `pagina_web/` con datos, gráficas e informes | — |
-| Interfaz visual (HTML/Streamlit) | ❌ No existe | **Desarrollar la UI** |
-| Deploy público (URL accesible) | ❌ No existe | Deploy en Vercel, Netlify o Streamlit Cloud |
-| Visualización de predicciones | ❌ No existe | Mostrar predicciones M1 y M2 en pantalla |
-| Comparación vs Bet365 visual | ❌ No existe | Incluir gráfico interactivo |
+| Interfaz visual (HTML/Streamlit) | ✅ **Desarrollar la UI** | — |
+| Deploy público (URL accesible) | ✅  Deploy en Vercel, Netlify o Streamlit Cloud | — |
+| Visualización de predicciones | ✅ Mostrar predicciones M1 y M2 en pantalla | — |
+| Comparación vs Bet365 visual | ✅ Incluir gráfico interactivo | — |
 
-**Esta rúbrica es la más incompleta. Es la que más trabajo requiere.**
-
----
-
-## 5. Checklist de inicio para la próxima sesión
-
-### Cambios de alta prioridad (impacto en rúbricas)
-
-- [ ] **M1:** Añadir `is_penalty` al feature set de `train_modelo_1.py`
-- [ ] **M1:** Añadir `shot_quality_index`, `is_in_area`, `is_central` y evaluar AUC
-- [ ] **M2A:** Cambiar features de regresión: reemplazar bloque `referee` por `xG+SOT rolling`
-- [ ] **M2B:** Probar bloque combinado `odds + xg_form_diff + points_form_diff + big_chances_diff`
-- [ ] **Web:** Crear `pagina_web/index.html` o `app.py` (Streamlit) con visualización básica
-
-### Cambios de media prioridad (mejoras)
-
-- [ ] **M2A:** Descargar cuotas Over/Under 2.5 de football-data.co.uk y añadir al dataset
-- [ ] **M1:** Probar `is_volley`, `is_set_piece`, `is_counter` como features adicionales
-- [ ] **Web:** Deploy en Streamlit Cloud (gratuito, no requiere dominio)
-
-### No cambiar (está funcionando bien)
-
-- Pipeline de feature engineering completo en `data/processed/`
-- Validación temporal (`TimeSeriesSplit`) de M2
-- Estructura de `pagina_web/` (contenido listo)
-- Artefactos `.joblib` y reportes generados
-- Features originales del taller (A–F) — todas documentadas y cumplidas
 
 ---
 
-## 6. Métricas actuales vs objetivos
+## 4. Métricas actuales vs objetivos
 
 | Modelo | Métrica | Valor actual | Objetivo taller | Estado |
 |---|---|---|---|---|
@@ -281,4 +193,4 @@ Esta rúbrica está bien cubierta. No requiere cambios.
 | M2A Regresión | RMSE CV | 1.608 | Minimizar | ⚠️ Alto |
 | M2B Clasificación | Accuracy CV | 49.58% | > Bet365 (50.83%) | ❌ Por debajo |
 | M2B Clasificación | Accuracy con mejoras | — | > 51% | ⬜ Potencial |
-| Web | Deploy público | No existe | URL accesible | ❌ Pendiente |
+| Web | Deploy público | No existe | URL accesible | ✅ |

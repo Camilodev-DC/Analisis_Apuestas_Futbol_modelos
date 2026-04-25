@@ -698,7 +698,13 @@ function buildXgTeamsChart() {
   const data = [...xgTeamsData].sort((a,b)=>b[xgSortKey]-a[xgSortKey]);
   const labelMap = { goals:'Goles totales', mean_xg:'xG medio/tiro', n_shots:'Tiros totales', goal_rate:'Conversión' };
   const metricData = data.map(t => xgSortKey === 'goal_rate' ? +(t.goal_rate*100).toFixed(1) : t[xgSortKey]);
-  const fmtCallback = v => xgSortKey === 'goal_rate' ? v.toFixed(1)+'%' : (xgSortKey === 'mean_xg' ? v.toFixed(4) : v);
+  
+  const fmtCallback = v => {
+    if (typeof v !== 'number') return v;
+    if (xgSortKey === 'goal_rate') return v.toFixed(1)+'%';
+    if (xgSortKey === 'mean_xg') return v.toFixed(4);
+    return v;
+  };
 
   if (xgTeamsChart) {
     xgTeamsChart.data.labels = data.map(t=>t.team_name);
@@ -711,7 +717,10 @@ function buildXgTeamsChart() {
     xgTeamsChart.update('active');
     return;
   }
-  xgTeamsChart = new Chart(document.getElementById('chart-xg-teams'), {
+  const ctx = document.getElementById('chart-xg-teams');
+  if (!ctx) return;
+
+  xgTeamsChart = new Chart(ctx, {
     type:'bar',
     data:{
       labels: data.map(t=>t.team_name),
@@ -724,6 +733,7 @@ function buildXgTeamsChart() {
       }]
     },
     options:{
+      animation: false,
       responsive:true, maintainAspectRatio:true, aspectRatio:1.6, indexAxis:'y',
       plugins:{ legend:{display:false},
         tooltip:{ callbacks:{ label: i => ` ${fmtCallback(i.raw)}` } }
@@ -734,6 +744,13 @@ function buildXgTeamsChart() {
       }
     }
   });
+  // Force a resize/update in case it was created while hidden
+  setTimeout(() => {
+    if (xgTeamsChart) {
+      xgTeamsChart.resize();
+      xgTeamsChart.update('none');
+    }
+  }, 100);
 }
 
 window.sortXgTeams = function(key) {
