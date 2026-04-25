@@ -59,11 +59,10 @@ function animateTabCharts(pane) {
     pane.querySelectorAll('canvas').forEach(canvas => {
       const chart = Chart.getChart(canvas);
       if (!chart) return;
-      // Fit canvas to its visible container, then redraw
       chart.resize();
       chart.update('none');
     });
-  }, 60);
+  }, 150);
 }
 
 // ── Chart.js defaults ──────────────────────────────────────────────
@@ -933,54 +932,61 @@ Promise.resolve(window.model_compareData)
     modelCompareData = data;
 
     // AUC compare in xg-bonus tab (from real data)
-    const m1 = data.modelo1.filter((d,i,a)=>a.findIndex(x=>x.model===d.model)===i);
-    const aucSorted = [...m1].sort((a,b)=>b.auc-a.auc);
-    new Chart(document.getElementById('chart-auc-compare'), {
-      type:'bar',
-      data:{
-        labels: aucSorted.map(d=>MODEL_LABELS[d.model]||d.model),
-        datasets:[{ label:'AUC-ROC',
-          data: aucSorted.map(d=>d.auc),
-          backgroundColor: aucSorted.map(d=>(MODEL_COLORS[d.model]||{bg:'rgba(74,140,63,0.5)'}).bg),
-          borderColor: aucSorted.map(d=>(MODEL_COLORS[d.model]||{bd:'#4A8C3F'}).bd),
-          borderWidth:1.5, borderRadius:6
-        }]
-      },
-      options:{
-        animation: false,
-        responsive:true, maintainAspectRatio:true, aspectRatio:1.5, indexAxis:'y',
-        plugins:{ legend:{display:false} },
-        scales:{
-          x:{ min:0.70, max:0.84, grid:{color:'rgba(45,106,39,0.1)'}, ticks:{font:{size:11},callback:v=>v.toFixed(3)} },
-          y:{ grid:{display:false}, ticks:{font:{size:11}} }
+    const m1_ = data.modelo1.filter((d,i,a)=>a.findIndex(x=>x.model===d.model)===i);
+    const aucSorted = [...m1_].sort((a,b)=>b.auc-a.auc);
+    
+    const canvasAuc = document.getElementById('chart-auc-compare');
+    if (canvasAuc) {
+      new Chart(canvasAuc, {
+        type:'bar',
+        data:{
+          labels: aucSorted.map(d=>MODEL_LABELS[d.model]||d.model),
+          datasets:[{ label:'AUC-ROC',
+            data: aucSorted.map(d=>d.auc),
+            backgroundColor: aucSorted.map(d=>(MODEL_COLORS[d.model]||{bg:'rgba(74,140,63,0.5)'}).bg),
+            borderColor: aucSorted.map(d=>(MODEL_COLORS[d.model]||{bd:'#4A8C3F'}).bd),
+            borderWidth:1.5, borderRadius:6
+          }]
+        },
+        options:{
+          animation: false,
+          responsive:true, maintainAspectRatio:true, aspectRatio:1.5, indexAxis:'y',
+          plugins:{ legend:{display:false} },
+          scales:{
+            x:{ min:0.70, max:0.84, grid:{color:'rgba(45,106,39,0.1)'}, ticks:{font:{size:11},callback:v=>v.toFixed(3)} },
+            y:{ grid:{display:false}, ticks:{font:{size:11}} }
+          }
         }
-      }
-    });
+      });
+    }
 
     // M2B compare in predictor tab
     const m2 = data.modelo2b;
-    const bet365 = m2[0]?.bet365_accuracy || 0.5043;
-    new Chart(document.getElementById('chart-m2b'), {
-      type:'bar',
-      data:{
-        labels: [...m2.map(d=>MODEL_LABELS[d.model]||d.model), 'Bet365'],
-        datasets:[{ label:'Accuracy',
-          data: [...m2.map(d=>d.accuracy), bet365],
-          backgroundColor:[...m2.map(d=>(MODEL_COLORS[d.model]||{bg:'rgba(74,140,63,0.5)'}).bg), 'rgba(197,160,89,0.55)'],
-          borderColor:[...m2.map(d=>(MODEL_COLORS[d.model]||{bd:'#4A8C3F'}).bd), '#C5A059'],
-          borderWidth:1.5, borderRadius:6
-        }]
-      },
-      options:{
-        animation: false,
-        responsive:true, maintainAspectRatio:true, aspectRatio:2, indexAxis:'y',
-        plugins:{ legend:{display:false} },
-        scales:{
-          x:{ grid:{color:'rgba(45,106,39,0.1)'}, ticks:{font:{size:11},callback:v=>(v*100).toFixed(1)+'%'} },
-          y:{ grid:{display:false}, ticks:{font:{size:11}} }
+    const bet365_val = m2[0]?.bet365_accuracy || 0.5043;
+    const canvasM2b = document.getElementById('chart-m2b');
+    if (canvasM2b) {
+      new Chart(canvasM2b, {
+        type:'bar',
+        data:{
+          labels: [...m2.map(d=>MODEL_LABELS[d.model]||d.model), 'Bet365'],
+          datasets:[{ label:'Accuracy',
+            data: [...m2.map(d=>d.accuracy), bet365_val],
+            backgroundColor:[...m2.map(d=>(MODEL_COLORS[d.model]||{bg:'rgba(74,140,63,0.5)'}).bg), 'rgba(197,160,89,0.55)'],
+            borderColor:[...m2.map(d=>(MODEL_COLORS[d.model]||{bd:'#4A8C3F'}).bd), '#C5A059'],
+            borderWidth:1.5, borderRadius:6
+          }]
+        },
+        options:{
+          animation: false,
+          responsive:true, maintainAspectRatio:true, aspectRatio:2, indexAxis:'y',
+          plugins:{ legend:{display:false} },
+          scales:{
+            x:{ grid:{color:'rgba(45,106,39,0.1)'}, ticks:{font:{size:11},callback:v=>(v*100).toFixed(1)+'%'} },
+            y:{ grid:{display:false}, ticks:{font:{size:11}} }
+          }
         }
-      }
-    });
+      });
+    }
 
     // M1 bonus table
     const tbl = document.getElementById('m1-bonus-table');
