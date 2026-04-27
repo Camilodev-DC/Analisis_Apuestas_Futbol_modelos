@@ -8,10 +8,10 @@
 
 ## 👥 Integrantes
 
-| Nombre completo | Código |
-|---|---|
-| Miguel Ángel Camargo | *(insertar código)* |
-| Camilo Hernández | *(insertar código)* |
+| Nombre completo |
+|---| 
+| Miguel Ángel Camargo 
+| Camilo Hernández 
 
 ---
 
