@@ -15,7 +15,6 @@ build/
 
 # Jupyter
 .ipynb_checkpoints/
-*.ipynb
 
 # Datos crudos (grandes, no versionar)
 data/raw/

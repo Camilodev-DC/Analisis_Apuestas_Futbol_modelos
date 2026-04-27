@@ -1,61 +1,167 @@
-# Premier League ML Predictor — Taller 2
-> **Machine Learning I (ML1-2026I)**  
+# ⚽ Premier League ML Predictor — Taller 2
+
+> **Curso:** Machine Learning I (ML1-2026I)  
 > **Universidad Externado de Colombia**  
-> **Estudiantes:** Miguel Camargo, Camilo Hernandez  
 > **Docente:** Julián Zuluaga
 
+---
 
-Este repositorio contiene una solución integral para el análisis y predicción de resultados de la Premier League 25/26, utilizando modelos de Machine Learning para superar los benchmarks de las casas de apuestas (Bet365). El proyecto incluye un pipeline completo de ingeniería de variables, modelos de clasificación de tiros (xG), modelos de predicción de partidos y un dashboard interactivo de alto rendimiento.
+## 👥 Integrantes
+
+| Nombre completo | Código |
+|---|---|
+| Miguel Ángel Camargo | *(insertar código)* |
+| Camilo Hernández | *(insertar código)* |
+
+---
+
+## 🌐 Dashboard Desplegado
+
+🔗 **URL:** https://analisis-apuestas-futbol-modelos.vercel.app
+
+> El dashboard es completamente interactivo: incluye curvas ROC animadas, calibración, distribución de resultados y comparativos de accuracy vs Bet365.
+
+---
+
+## 📌 Descripción del Approach
+
+### Objetivo
+Superar el benchmark predictivo de **Bet365** en la Premier League 2024/25, usando modelos de regresión logística con ingeniería de variables avanzada.
+
+### Pipeline general
+
+```
+data/raw/  →  Feature Engineering  →  Entrenamiento  →  Evaluación  →  Dashboard
+```
+
+### Modelos entrenados
+
+| Modelo | Tipo | Target | Métrica principal |
+|---|---|---|---|
+| **Modelo 1 — xG** | Regresión logística | `is_goal` (por tiro) | AUC-ROC = **0.7813** |
+| **Modelo 2A** | Regresión lineal | `total_goals` (por partido) | RMSE = 1.60, MAE = 1.27 |
+| **Modelo 2B** | Clasificación multinomial | `FTR` (H/D/A) | Accuracy = **50.87%** vs Bet365 50.43% |
+
+### Features más importantes
+
+**Modelo 1 (xG por tiro):**
+- `distance_to_goal`, `angle_to_goal` — geometría del tiro
+- `is_big_chance` — indicador de gran oportunidad
+- `shot_quality_index` — índice compuesto propio (big_chance + area + distancia)
+- `defensive_pressure`, `buildup_passes` — variables de contexto originales
+
+**Modelo 2B (clasificación FTR):**
+- `implied_prob_h/d/a` — probabilidades implícitas de Bet365 (normalizadas)
+- `xg_form_diff` — diferencial de xG en forma reciente (ventana 5 partidos)
+- `points_form_diff` — diferencial de puntos en forma reciente
+- `home_strength_rating` — rating de fortaleza del equipo local
 
 ---
 
 ## 📂 Estructura del Repositorio
 
-*   **`scripts/`**: Motores de ingeniería de variables y entrenamiento (`train_modelo_1.py`, `train_modelo_2.py`).
-*   **`data/`**: Datos crudos y procesados tras el feature engineering.
-*   **`models/`**: Artefactos `.joblib` listos para producción.
-*   **`pagina_web/`**: Dashboard interactivo con visualización de datos en tiempo real.
-*   **`informes/`**: Documentación técnica detallada de cada modelo.
+```
+Analisis_Apuestas_Futbol_modelos/
+│
+├── notebooks/
+│   ├── 01_EDA_y_Modelo1_xG.ipynb          # EDA + Modelo xG (Expected Goals)
+│   └── 02_EDA_y_Modelos2_Partido.ipynb    # EDA + Modelos de partido (2A y 2B)
+│
+├── scripts/                               # Pipeline modular de Python
+│   ├── 01_build_features_modelo1.py
+│   ├── 02_train_modelo1.py
+│   ├── 03_build_features_modelo2.py
+│   ├── 04_train_modelo2.py
+│   ├── 05_bonus_modelos_avanzados.py
+│   ├── 06_bonus_clustering.py
+│   └── 07_inference_models.py
+│
+├── data/
+│   ├── raw/                               # Datos crudos (no versionados — ver .gitignore)
+│   ├── processed/                         # Features procesados
+│   └── outputs/                           # Métricas JSON y CSVs de resultados
+│
+├── models/                                # Modelos entrenados (.joblib)
+│   ├── modelo1_xg.joblib
+│   ├── modelo2a_regresion.joblib
+│   └── modelo2b_clasificacion.joblib
+│
+├── pagina_web/                            # Dashboard interactivo
+│   ├── index.html
+│   ├── css/
+│   ├── js/
+│   └── graficas/                          # PNGs pre-renderizados
+│
+├── informes/                              # Documentación técnica por modelo
+├── generate_charts.py                     # Script para regenerar gráficas estáticas
+├── requirements.txt
+└── README.md
+```
 
 ---
 
-## 🎯 Respuestas a Preguntas del Taller (FAQ)
+## 🚀 Instrucciones para ejecutar los Notebooks
 
-### 1. ¿Nuestro modelo le gana a las casas de apuestas (Bet365)?
-**Sí.** Según la última validación cruzada (CV):
-*   **Modelo 2B (Logístico Multinomial)**: **50.87%** de Accuracy.
-*   **Benchmark Bet365**: **50.43%** de Accuracy.
-Hemos logrado superar a Bet365 por **+0.44 puntos porcentuales**, lo cual es un resultado estadísticamente relevante para este mercado. La clave fue combinar las cuotas implícitas con variables de ejecución reciente como `xg_form_diff`.
+### 1. Clonar el repositorio
 
-### 2. ¿Qué variables son las más determinantes para predecir un gol (xG)?
-Las variables más potentes en nuestro Modelo 1 son:
-1.  **`is_big_chance`**: La variable con mayor peso positivo (odds ratio elevado).
-2.  **`distance_to_goal`**: Correlación negativa clara (a mayor distancia, menor probabilidad).
-3.  **`angle_to_goal`**: Crucial para capturar la visibilidad de la portería.
-4.  **`defensive_pressure`**: Nuestra variable original que penaliza tiros en zonas congestionadas.
+```bash
+git clone https://github.com/Camilodev-DC/Analisis_Apuestas_Futbol_modelos.git
+cd Analisis_Apuestas_Futbol_modelos
+```
 
-### 3. ¿Por qué el modelo de regresión de goles (M2A) tiene un R² difícil de elevar?
-El modelo M2A reporta un R² cercano a 0 (o ligeramente negativo). El análisis de residuos indica que esto se debe a la **ausencia de la variable Over/Under 2.5 de Bet365** en el dataset original. En el mercado de apuestas, las cuotas de goles totales capturan mucha información que las estadísticas de tiros (`xg_rolling`) no alcanzan a explicar por completo.
+### 2. Crear entorno virtual e instalar dependencias
 
-### 4. ¿Es el modelo xG confiable?
-**Altamente confiable.** El modelo presenta un **AUC-ROC de 0.7813** (superando el objetivo de 0.78) y una calibración de **1.05x**. Esto significa que por cada 100 goles que el modelo predice, ocurren 105 en la realidad, lo que demuestra un sesgo mínimo y una alta capacidad de discriminación.
+```bash
+python -m venv venv
+
+# Windows
+venv\Scripts\activate
+
+# macOS / Linux
+source venv/bin/activate
+
+pip install -r requirements.txt
+```
+
+### 3. Colocar los datos crudos
+
+> ⚠️ Los datos crudos **no están versionados** por tamaño. Debes colocar los archivos en `data/raw/`:
+> - `events.csv` — eventos de tiro por partido
+> - `matches.csv` — resultados y cuotas Bet365
+
+### 4. Ejecutar los notebooks
+
+```bash
+jupyter notebook
+```
+
+Abrir en este orden:
+1. `notebooks/01_EDA_y_Modelo1_xG.ipynb`
+2. `notebooks/02_EDA_y_Modelos2_Partido.ipynb`
+
+### 5. (Opcional) Ejecutar el pipeline de scripts
+
+```bash
+# Desde la raíz del proyecto
+python scripts/01_build_features_modelo1.py
+python scripts/02_train_modelo1.py
+python scripts/03_build_features_modelo2.py
+python scripts/04_train_modelo2.py
+python scripts/05_bonus_modelos_avanzados.py
+python generate_charts.py
+```
 
 ---
 
-## 🎯 Cumplimiento de Rúbricas
+## 🎯 Resultados clave
 
-### 1. Modelo xG (Expected Goals) — Rúbrica 3 y 4
-*   **Rendimiento**: **AUC-ROC: 0.7813**.
-*   **Calibración**: Ratio 1.05x (casi perfecta).
-*   **Originalidad**: Features como `defensive_pressure` y `buildup_quality`.
+### ¿Nuestro modelo le gana a Bet365?
+**Sí.** Modelo 2B (Logístico Multinomial): **50.87%** de Accuracy vs Bet365: **50.43%**.  
+La clave fue combinar probabilidades implícitas con `xg_form_diff`.
 
-### 2. Modelo de Regresión Lineal — Rúbrica 1
-*   **Métricas**: Reporte de RMSE (1.60) y MAE (1.27).
-*   **Análisis**: Diagnóstico de residuos realizado para identificar falta de linealidad en goles totales.
-
-### 3. Modelo de Clasificación (FTR) — Rúbrica 2
-*   **Accuracy**: **50.87%** (Ganando a Bet365).
-*   **Interpretación**: Análisis de coeficientes y Odds Ratios disponible en `informes/`.
+### ¿Qué tan confiable es el xG?
+**AUC-ROC: 0.7813** (objetivo: > 0.78 ✅) y calibración ratio **1.05x** (casi perfecta).
 
 ---
-*Este proyecto es parte del Taller 2 de Machine Learning I - Universidad Externado de Colombia.*
+
+*Taller 2 — Machine Learning I — Universidad Externado de Colombia*
