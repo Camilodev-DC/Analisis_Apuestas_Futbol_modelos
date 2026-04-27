@@ -17,7 +17,7 @@
 
 ## 🌐 Dashboard Desplegado
 
-🔗 **URL:** https://analisis-apuestas-futbol-modelos.vercel.app
+🔗 **URL:** https://analisis-apuestas-futbol-modelos.vercel.app/#hero
 
 > El dashboard es completamente interactivo: incluye curvas ROC animadas, calibración, distribución de resultados y comparativos de accuracy vs Bet365.
 
